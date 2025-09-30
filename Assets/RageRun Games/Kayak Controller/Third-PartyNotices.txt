@@ -1,0 +1,15 @@
+Asset uses 3rd person character from Unity Technologies : https://assetstore.unity.com/packages/essentials/starter-assets-thirdperson-updates-in-new-charactercontroller-pa-196526
+Asset uses PixPal Palette Texture from Imphenzia under CC0 License : https://imphenzia.com/assets
+Asset uses Water Paddling for SFX from egeexyz under CC0 : https://freesound.org/people/egeexyz/sounds/702386/
+Asset uses Mountain Texture from Rob Tuytel under CCO: https://polyhaven.com/a/coast_sand_rocks_02
+Asset uses Leaves Texture from ambientCG under CCO: https://ambientcg.com/view?id=LeafSet002
+
+Built-in 
+Asset uses Crest from Wave Harmonic for Water Simulation in Built-in Pipline under MIT License : https://github.com/wave-harmonic/crest/releases/tag/4.22.1 
+
+For URP
+Asset uses Boat Attack Water System From Unity in URP under Unity Companion License : https://github.com/Unity-Technologies/BoatAttack/blob/master/LICENSE.md
+
+
+
+For URP or HDRP water systems implementation please contact ragerungames@gmail.com or dm me on discord
