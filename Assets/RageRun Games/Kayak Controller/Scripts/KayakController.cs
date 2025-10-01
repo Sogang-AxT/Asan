@@ -10,7 +10,8 @@ namespace RageRunGames.KayakController
         AnimationEvent
     }
     
-
+    
+    //-- 해당 클래스는 현재 쓰이고 있지 않음. (체크 해제 상태) --//
     [RequireComponent(typeof(Rigidbody))]
     public class KayakController : MonoBehaviour
     {

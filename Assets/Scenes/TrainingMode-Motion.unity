@@ -529,18 +529,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bb2d76199080cc42b6de3538fea54c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ArcFrame: {fileID: 0}
-  LeftCube: {fileID: 0}
-  RightCube: {fileID: 0}
-  InvertLeftX: 0
-  InvertRightX: 0
-  AutoCalibrateOnGameStart: 1
-  RecalibrateKey: 99
-  ZeroDeadbandDeg: 2
-  RigBuilder: {fileID: 0}
-  RigLayer: {fileID: 0}
-  Animator: {fileID: 0}
-  CharacterRoot: {fileID: 0}
   Paddle: {fileID: 0}
   LeftHandTarget: {fileID: 0}
   RightHandTarget: {fileID: 0}
@@ -551,13 +539,6 @@ MonoBehaviour:
   RightElbowHint: {fileID: 0}
   LeftShoulder: {fileID: 0}
   RightShoulder: {fileID: 0}
-  ElbowSideOffset: 0.1
-  ElbowDownOffset: 0.05
-  HintFollowLerp: 12
-  ArmMaxReach: 0.55
-  c_LEG_L: {fileID: 0}
-  c_LEG_R: {fileID: 0}
-  LegFollowLerp: 12
   LeftGripLocal: {x: 0.2, y: 0, z: -0.3}
   RightGripLocal: {x: -0.2, y: 0, z: -0.3}
   AlignHandsToPaddle: 0
@@ -588,11 +569,32 @@ MonoBehaviour:
   PaddleRotLerp: 10
   PaddlePosLerp: 12
   Deadzone: 0.02
-  PropulsionDeadbandDeg: 3
-  PropulsionGain: 1.2
-  PropulsionSmoothing: 0.15
-  YawTorqueFromDelta: 0.25
-  ScaleYawByPropulsion: 1
+  ElbowSideOffset: 0.1
+  ElbowDownOffset: 0.05
+  HintFollowLerp: 12
+  ArmMaxReach: 0.55
+  c_LEG_L: {fileID: 0}
+  c_LEG_R: {fileID: 0}
+  LegFollowLerp: 12
+  ArcFrame: {fileID: 0}
+  LeftCube: {fileID: 0}
+  RightCube: {fileID: 0}
+  InvertLeftX: 0
+  InvertRightX: 0
+  AutoCalibrateOnGameStart: 1
+  RecalibrateKey: 99
+  ZeroDeadbandDeg: 2
+  RigBuilder: {fileID: 0}
+  RigLayer: {fileID: 0}
+  Animator: {fileID: 0}
+  CharacterRoot: {fileID: 0}
+  DistanceMeters: 0
+  PaddleCount: 0
+  distanceText: {fileID: 0}
+  paddleCountText: {fileID: 0}
+  angleText: {fileID: 0}
+  MinCountAngleDeg: 10
+  ResetAngleDeg: 5
   EnablePhysicsAssist: 1
   TargetRb: {fileID: 0}
   ConstantWaterLevel: 0
@@ -614,13 +616,11 @@ MonoBehaviour:
   PropelTarget: {fileID: 0}
   PropelForwardRef: {fileID: 0}
   UseWorldSpaceForward: 0
-  MinCountAngleDeg: 10
-  ResetAngleDeg: 5
-  DistanceMeters: 0
-  PaddleCount: 0
-  distanceText: {fileID: 0}
-  paddleCountText: {fileID: 0}
-  angleText: {fileID: 0}
+  PropulsionDeadbandDeg: 3
+  PropulsionGain: 1.2
+  PropulsionSmoothing: 0.15
+  YawTorqueFromDelta: 0.25
+  ScaleYawByPropulsion: 1
 --- !u!114 &90621267
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2671,18 +2671,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bb2d76199080cc42b6de3538fea54c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ArcFrame: {fileID: 669455223}
-  LeftCube: {fileID: 1079016496}
-  RightCube: {fileID: 90621265}
-  InvertLeftX: 0
-  InvertRightX: 0
-  AutoCalibrateOnGameStart: 1
-  RecalibrateKey: 99
-  ZeroDeadbandDeg: 2
-  RigBuilder: {fileID: 1028642545}
-  RigLayer: {fileID: 1245946123}
-  Animator: {fileID: 1028642542}
-  CharacterRoot: {fileID: 2079017069}
   Paddle: {fileID: 1510701415}
   LeftHandTarget: {fileID: 1165463002}
   RightHandTarget: {fileID: 879769493}
@@ -2693,13 +2681,6 @@ MonoBehaviour:
   RightElbowHint: {fileID: 501125233}
   LeftShoulder: {fileID: 1816567155}
   RightShoulder: {fileID: 334083447}
-  ElbowSideOffset: -300
-  ElbowDownOffset: 110
-  HintFollowLerp: 12
-  ArmMaxReach: 0.5
-  c_LEG_L: {fileID: 1759892781}
-  c_LEG_R: {fileID: 226874782}
-  LegFollowLerp: 12
   LeftGripLocal: {x: -1.6, y: 0.74, z: 0.3}
   RightGripLocal: {x: 1.6, y: 0.74, z: 0.3}
   AlignHandsToPaddle: 1
@@ -2730,11 +2711,32 @@ MonoBehaviour:
   PaddleRotLerp: 3
   PaddlePosLerp: 12
   Deadzone: 0.01
-  PropulsionDeadbandDeg: 3
-  PropulsionGain: 10
-  PropulsionSmoothing: 0.15
-  YawTorqueFromDelta: 0.25
-  ScaleYawByPropulsion: 1
+  ElbowSideOffset: -300
+  ElbowDownOffset: 110
+  HintFollowLerp: 12
+  ArmMaxReach: 0.5
+  c_LEG_L: {fileID: 1759892781}
+  c_LEG_R: {fileID: 226874782}
+  LegFollowLerp: 12
+  ArcFrame: {fileID: 669455223}
+  LeftCube: {fileID: 1079016496}
+  RightCube: {fileID: 90621265}
+  InvertLeftX: 0
+  InvertRightX: 0
+  AutoCalibrateOnGameStart: 1
+  RecalibrateKey: 99
+  ZeroDeadbandDeg: 2
+  RigBuilder: {fileID: 1028642545}
+  RigLayer: {fileID: 1245946123}
+  Animator: {fileID: 1028642542}
+  CharacterRoot: {fileID: 2079017069}
+  DistanceMeters: 0
+  PaddleCount: 0
+  distanceText: {fileID: 285386574}
+  paddleCountText: {fileID: 2017360340}
+  angleText: {fileID: 348516245}
+  MinCountAngleDeg: 10
+  ResetAngleDeg: 5
   EnablePhysicsAssist: 1
   TargetRb: {fileID: 350235496292053148}
   ConstantWaterLevel: 0.2
@@ -2756,13 +2758,11 @@ MonoBehaviour:
   PropelTarget: {fileID: 350235496292053137}
   PropelForwardRef: {fileID: 1671798653}
   UseWorldSpaceForward: 0
-  MinCountAngleDeg: 10
-  ResetAngleDeg: 5
-  DistanceMeters: 0
-  PaddleCount: 0
-  distanceText: {fileID: 285386574}
-  paddleCountText: {fileID: 2017360340}
-  angleText: {fileID: 348516245}
+  PropulsionDeadbandDeg: 3
+  PropulsionGain: 10
+  PropulsionSmoothing: 0.15
+  YawTorqueFromDelta: 0.25
+  ScaleYawByPropulsion: 1
 --- !u!4 &669455223
 Transform:
   m_ObjectHideFlags: 0

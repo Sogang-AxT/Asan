@@ -6,7 +6,7 @@ namespace RageRunGames.KayakController
 {
     public class CharacterAnimationEvent : MonoBehaviour
     {
-        private KayakController kayakController;
+        private KayakController kayakController; //-- 해당 클래스는 현재 쓰이고 있지 않음. (체크 해제 상태) --//
 
         [SerializeField] private Transform rightPaddle;
         [SerializeField] private Transform leftPaddle;
@@ -46,6 +46,8 @@ namespace RageRunGames.KayakController
 
         }
 
+        //-- 아래 메서드는 현재 쓰이고 있지 않음. --//
+        
         public void ApplyRightPaddleStrikingForce()
         {
 
@@ -64,7 +66,7 @@ namespace RageRunGames.KayakController
         
         public void ApplyLeftPaddleStrikingForce()
         {
-            
+
             kayakController.PlayOneShot(-0.85f);
 
             Collider[] colliders = Physics.OverlapSphere(leftPaddle.position, 5);
