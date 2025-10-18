@@ -1,13 +1,9 @@
-using System;
-using RageRunGames.KayakController;
-using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMovementController : MonoBehaviour {
     [Header("Arc space (axes used for rotation)")]
-    public Transform arcFrameTransform; // 비우면 Paddle 축 기준
+    // public Transform arcFrameTransform; // 비우면 Paddle 축 기준
     
     [Header("Input (Joy-Con mapped cubes)")]
     public Transform joyconCubeLeft;
@@ -28,20 +24,20 @@ public class PlayerMovementController : MonoBehaviour {
     private bool _isAngleCalibrated; // false
     
     private (bool, bool) _gateLockTuple;    // gateL, gateR
-    private (float, float) _localJoyconXTuple;  // 다리 로컬 기준 (좌, 우); _lx, _rx
+    private (float, float) _localJoyconXTuple;  // 다리 로컬 기준 (좌, 우); _baseLX, _baseRX
     private (float, float) _worldJoyconXTuple;  // 다리 월드 기준 (좌, 우)
-    private (float, float) _deltaAngleTuple;    // 다리 델타 각 (좌, 우)
+    private (float, float) _deltaAngleTuple;    // 다리 델타 각 (좌, 우); _lx, _rx
     private (float, float) _angleSumAbsTuple;   // 다리 각도 절대값 (좌, 우); _sumLeft/RightAngleAbs
     private (int, int) _movementCountTuple;     // 다리 움직임 카운팅 (좌, 우); _countLeft/Right
     
-    public float LegMovementAvgAngleLeft 
-        => (_movementCountTuple.Item1 > 0) ? (_angleSumAbsTuple.Item1 / _movementCountTuple.Item1) : 0f;
-    public float LegMovementAvgAngleRight 
-        => (_movementCountTuple.Item2 > 0) ? (_angleSumAbsTuple.Item2 / _movementCountTuple.Item2) : 0f;
-    public int LegStrokeCountLeft
-        => _movementCountTuple.Item1;
-    public int LegStrokeCountRight 
-        => _movementCountTuple.Item2;
+    // public float LegMovementAvgAngleLeft 
+    //     => (_movementCountTuple.Item1 > 0) ? (_angleSumAbsTuple.Item1 / _movementCountTuple.Item1) : 0f;
+    // public float LegMovementAvgAngleRight 
+    //     => (_movementCountTuple.Item2 > 0) ? (_angleSumAbsTuple.Item2 / _movementCountTuple.Item2) : 0f;
+    // public int LegStrokeCountLeft
+    //     => _movementCountTuple.Item1;
+    // public int LegStrokeCountRight 
+    //     => _movementCountTuple.Item2;
     
     // 다리 움직임 피크 계산
     private sbyte _domTrend;            // +1 up, -1 down, 0 hold
@@ -52,16 +48,16 @@ public class PlayerMovementController : MonoBehaviour {
     private string _peakDomSide = "-";
     
     // Animation shared bases
-    Vector3    _paddleBasePos;
-    Quaternion _paddleBaseRot;
-    Vector3    _chestBasePos;
-    Quaternion _chestBaseRot;
-    Vector3    _spineBasePos;
-    Quaternion _spineBaseRot;
-    Quaternion _neckBaseRot;
-    // BodyRoot base
-    Quaternion _bodyRootBaseRot;
-    Vector3    _bodyRootBasePos;
+    // Vector3    _paddleBasePos;
+    // Quaternion _paddleBaseRot;
+    // Vector3    _chestBasePos;
+    // Quaternion _chestBaseRot;
+    // Vector3    _spineBasePos;
+    // Quaternion _spineBaseRot;
+    // Quaternion _neckBaseRot;
+    // // BodyRoot base
+    // Quaternion _bodyRootBaseRot;
+    // Vector3    _bodyRootBasePos;
     
     
     // -- Physics -- //
@@ -95,25 +91,25 @@ public class PlayerMovementController : MonoBehaviour {
     
     [Header("Propel Target / Direction")]
     public Transform propelTargetTransform;              // 전진 대상 (연속 힘 적용)
-    public Transform propelForwardRef;
+    // public Transform propelForwardRef;
     public bool useWorldSpaceForward = false;
     
     [Header("Angle-driven Propulsion")]
+    private float _propulsion;                  // 추친력
     public float propulsionDeadBandDeg = 3f;    // Δ각이 이 값(도) 미만이면 전진 힘 0
     public float propulsionGain = 1.2f;         // 전진 힘 스케일(값↑ = 더 세게)
     public float propulsionSmoothing = 0.15f;   // Δ각→전진 힘 저역통과(초)
     public float yawTorqueFromDelta = 0.25f;    // 좌/우 Δ각 차이에 비례하는 약한 Yaw 토크
     public bool scaleYawByPropulsion = true;    // Yaw 토크를 추진량에 비례시킬지
-
     
-    // TODO: 코드 정리; UI 관련 외부 코드
+    
     [Header("Smoothing")]
-    public float dominantLerp    = 8f;
+    // public float dominantLerp    = 8f;
     public float phaseSmoothUp   = 0.06f;
     public float phaseSmoothDown = 0.18f;
-    public float returnLerp      = 10f;
-    public float paddleRotLerp   = 10f;
-    public float paddlePosLerp   = 12f;
+    // public float returnLerp      = 10f;
+    // public float paddleRotLerp   = 10f;
+    // public float paddlePosLerp   = 12f;
     public float deadzone        = 0.02f;
     public int distanceMeters = 0; 
     public int paddleCount = 0;
@@ -125,7 +121,6 @@ public class PlayerMovementController : MonoBehaviour {
     private Animator _animator;
     private Rigidbody _rigidbody;
     
-    private float _propulsion;   // 추친력
     private float _fullAngleDeg = 20f;
     
     
@@ -167,9 +162,9 @@ public class PlayerMovementController : MonoBehaviour {
     }
     
     private void Update() {
-        if (!GameStarter.GameStarted) {
-            return;
-        }
+        // if (!GameStarter.GameStarted) {
+        //     return;
+        // }
         
         // 수동 보정
         if (Input.GetKeyDown(this.manualCalibrateKeyCode)) {
@@ -201,6 +196,8 @@ public class PlayerMovementController : MonoBehaviour {
         // 움직임 크기가 데드존 초과인가?
         var deltaValueLeft = this._rawInputTuple.Item1 - this._localJoyconXTuple.Item1;
         this._deltaAngleTuple.Item1 = Mathf.Abs(deltaValueLeft) < this.deadZoneDegree ? 0f : deltaValueLeft;
+        
+        // Debug.Log(this._deltaAngleTuple.Item1);
         
         var deltaValueRight = this._rawInputTuple.Item2 - this._localJoyconXTuple.Item2;
         this._deltaAngleTuple.Item2 = Mathf.Abs(deltaValueRight) < this.deadZoneDegree ? 0f : deltaValueRight;
@@ -271,6 +268,8 @@ public class PlayerMovementController : MonoBehaviour {
             this._movementCountTuple.Item2++;
         }
         
+        // TODO: DEBUG
+        // Debug.Log($"[Stroke++] side={(leftSide ? "Left" : "Right")}, angleAbs={angleAbsDeg:0.0}°, +{addDist}m, count={this.paddleCount}");
         // RefreshStatsUI();
     }
 
@@ -296,22 +295,23 @@ public class PlayerMovementController : MonoBehaviour {
     private void CalculatePropulsion() {
         var drive = 0f;
         var absDom = 
-            Mathf.Abs(this._peakDomSide == "Left" ? this._localJoyconXTuple.Item1 : this._localJoyconXTuple.Item2);
+            Mathf.Abs(this._peakDomSide == "Left" ? this._deltaAngleTuple.Item1 : this._deltaAngleTuple.Item2);
         
-        if (absDom > this.deadZoneDegree) {
+        if (absDom > this.propulsionDeadBandDeg) {
             drive = 
-                Mathf.InverseLerp(this.deadZoneDegree, Mathf.Max(this.deadZoneDegree + 1f, this._fullAngleDeg), absDom);
+                Mathf.InverseLerp(this.propulsionDeadBandDeg, Mathf.Max(this.propulsionDeadBandDeg + 1f, this._fullAngleDeg), absDom);
         }
 
         var dt = Mathf.Max(Time.deltaTime, 1e-4f);
-        var a  = 1f - Mathf.Exp(-dt / Mathf.Max(1e-4f, this.propulsionSmoothing));
+        var t  = 1f - Mathf.Exp(-dt / Mathf.Max(1e-4f, this.propulsionSmoothing));
         
-        this._propulsion = Mathf.Lerp(this._propulsion, drive, a);
+        this._propulsion = Mathf.Lerp(this._propulsion, drive, t);
+        
     }
 
     private void PeakTrendReset() {
-        var absLeftDeg = Mathf.Abs(this._localJoyconXTuple.Item1);
-        var absRightDeg = Mathf.Abs(this._localJoyconXTuple.Item2);
+        var absLeftDeg = Mathf.Abs(this._deltaAngleTuple.Item1);
+        var absRightDeg = Mathf.Abs(this._deltaAngleTuple.Item2);
 
         if (this._gateLockTuple.Item1 && absLeftDeg <= this.resetCountAngle) {
             this._gateLockTuple.Item1 = false;

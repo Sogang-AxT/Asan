@@ -6,7 +6,7 @@ namespace RageRunGames.KayakController
 {
     public class CharacterAnimationEvent : MonoBehaviour
     {
-        private KayakController kayakController; //-- 해당 클래스는 현재 쓰이고 있지 않음. (체크 해제 상태) --//
+        [SerializeField] private KayakController kayakController;
 
         [SerializeField] private Transform rightPaddle;
         [SerializeField] private Transform leftPaddle;

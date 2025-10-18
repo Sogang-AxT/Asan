@@ -6308,7 +6308,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -6464,7 +6464,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -6792,7 +6792,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -7230,7 +7230,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -7554,7 +7554,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -8105,7 +8105,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -8711,7 +8711,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -9009,6 +9009,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4486377498f54eb4ac1aa7234971a0c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  kayakController: {fileID: 0}
   rightPaddle: {fileID: 2175925502959182620}
   leftPaddle: {fileID: 5822658370280607167}
   rightParticleSystem: {fileID: 2004645664638304111}
@@ -9104,7 +9105,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -9126,7 +9127,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -9164,7 +9165,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -15675,7 +15676,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -16455,7 +16456,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -16691,7 +16692,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -16729,7 +16730,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -17173,7 +17174,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -17285,7 +17286,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -18298,10 +18299,10 @@ GameObject:
   m_Component:
   - component: {fileID: 5851851833860672887}
   - component: {fileID: 5772050739541589373}
+  - component: {fileID: 1836995260410449913}
   - component: {fileID: 5851851833860672889}
   - component: {fileID: 1317648718993910141}
   - component: {fileID: 5851851833860672888}
-  - component: {fileID: 1836995260410449913}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -18374,11 +18375,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1c57b24f3689264f85150a836939f63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  arcFrameTransform: {fileID: 7631795754841285095}
   joyconCubeLeft: {fileID: 1079016496}
   joyconCubeRight: {fileID: 90621265}
-  isInvertedLeft: 0
-  isInvertedRight: 0
+  isInvertedLeft: 1
+  isInvertedRight: 1
   useAngleAutoCalibrator: 1
   manualCalibrateKeyCode: 99
   deadZoneDegree: 2
@@ -18405,20 +18405,15 @@ MonoBehaviour:
   uprightAngularDamping: 0.1
   centerOfMassOffset: {x: 0, y: -0.1, z: 0}
   applyCenterOfMass: 1
-  propelTargetTransform: {fileID: 7631795754841285095}
-  propelForwardRef: {fileID: 7631795754841285095}
+  propelTargetTransform: {fileID: 5851851833860672887}
   useWorldSpaceForward: 0
   propulsionDeadBandDeg: 3
   propulsionGain: 1.2
   propulsionSmoothing: 0.15
   yawTorqueFromDelta: 0.25
   scaleYawByPropulsion: 1
-  dominantLerp: 8
   phaseSmoothUp: 0.06
   phaseSmoothDown: 0.18
-  returnLerp: 10
-  paddleRotLerp: 10
-  paddlePosLerp: 12
   deadzone: 0.02
   distanceMeters: 0
   paddleCount: 0
@@ -18584,7 +18579,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -32759,7 +32754,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -37982,7 +37977,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -38257,7 +38252,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -38680,7 +38675,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
