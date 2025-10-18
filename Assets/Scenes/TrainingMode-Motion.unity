@@ -704,8 +704,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 244820647}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.0902706, y: -2.3003482e-10, z: 1.2656174e-11, w: 0.99591726}
-  m_LocalPosition: {x: 21.5, y: 0.63, z: 4.34}
+  m_LocalRotation: {x: 0.13417783, y: -1.5896586e-22, z: 1.387165e-23, w: 0.9909573}
+  m_LocalPosition: {x: 0, y: 2, z: -4.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -730,8 +730,8 @@ MonoBehaviour:
   m_StreamingVersion: 20170927
   m_Priority: 10
   m_StandbyUpdate: 2
-  m_LookAt: {fileID: 0}
-  m_Follow: {fileID: 0}
+  m_LookAt: {fileID: 5851851833860672887}
+  m_Follow: {fileID: 5851851833860672887}
   m_Lens:
     FieldOfView: 60
     OrthographicSize: 5
@@ -1053,7 +1053,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &312519435
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1232,8 +1232,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.09027061, y: -2.3078374e-10, z: 2.0918392e-11, w: 0.99591726}
-  m_LocalPosition: {x: 21.5, y: 0.63, z: 4.34}
+  m_LocalRotation: {x: 0.13417785, y: -1.6002141e-22, z: 2.166726e-23, w: 0.99095726}
+  m_LocalPosition: {x: 0, y: 2, z: -4.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3403,7 +3403,7 @@ GameObject:
   - component: {fileID: 1043914195}
   - component: {fileID: 1043914198}
   - component: {fileID: 1043914197}
-  - component: {fileID: 1043914196}
+  - component: {fileID: 1043914199}
   m_Layer: 0
   m_Name: cm
   m_TagString: Untagged
@@ -3426,28 +3426,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 244820648}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1043914196
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1043914194}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa7155796051b734daa718462081dc5f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_BindingMode: 5
-  m_FollowOffset: {x: 0, y: 1.89, z: -2.67}
-  m_XDamping: 1
-  m_YDamping: 0.5
-  m_ZDamping: 0.5
-  m_AngularDampingMode: 0
-  m_PitchDamping: 0
-  m_YawDamping: 0
-  m_RollDamping: 0
-  m_AngularDamping: 0
 --- !u!114 &1043914197
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -3460,7 +3438,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4044717213e31446939f7bd49c896ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_TrackedObjectOffset: {x: 0, y: 0.34, z: 5.81}
+  m_TrackedObjectOffset: {x: 0, y: 0, z: 2.75}
   m_LookaheadTime: 0
   m_LookaheadSmoothing: 0
   m_LookaheadIgnoreY: 0
@@ -3487,6 +3465,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac0b09e7857660247b1477e93731de29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1043914199
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1043914194}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa7155796051b734daa718462081dc5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_BindingMode: 1
+  m_FollowOffset: {x: 0, y: 2, z: -4.5}
+  m_XDamping: 1
+  m_YDamping: 1
+  m_ZDamping: 1
+  m_AngularDampingMode: 0
+  m_PitchDamping: 0
+  m_YawDamping: 0
+  m_RollDamping: 0
+  m_AngularDamping: 0
 --- !u!1 &1044843222
 GameObject:
   m_ObjectHideFlags: 0
@@ -18303,7 +18303,7 @@ GameObject:
   - component: {fileID: 5851851833860672888}
   - component: {fileID: 1836995260410449913}
   m_Layer: 0
-  m_Name: Kayak Controller (Crest Water Aligner)
+  m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18383,7 +18383,7 @@ MonoBehaviour:
   manualCalibrateKeyCode: 99
   deadZoneDegree: 2
   minCountAngle: 10
-  countResetAngle: 5
+  resetCountAngle: 5
   enablePhysicsAssist: 1
   constantWaterLevel: 0
   buoyancyPoints:
@@ -18397,7 +18397,7 @@ MonoBehaviour:
   dragSpeedFactor: 0.05
   baseAngularDrag: 3
   angularDragFactor: 0.025
-  lateralDampingMul: 0.8
+  lateralDampingMultiply: 0.8
   maxVelocity: 6
   maxAngularVelocity: 5
   uprightStartAngleDeg: 5
@@ -18405,14 +18405,23 @@ MonoBehaviour:
   uprightAngularDamping: 0.1
   centerOfMassOffset: {x: 0, y: -0.1, z: 0}
   applyCenterOfMass: 1
-  propelTargetTransform: {fileID: 0}
-  propelForwardRef: {fileID: 0}
+  propelTargetTransform: {fileID: 7631795754841285095}
+  propelForwardRef: {fileID: 7631795754841285095}
   useWorldSpaceForward: 0
   propulsionDeadBandDeg: 3
   propulsionGain: 1.2
   propulsionSmoothing: 0.15
   yawTorqueFromDelta: 0.25
   scaleYawByPropulsion: 1
+  dominantLerp: 8
+  phaseSmoothUp: 0.06
+  phaseSmoothDown: 0.18
+  returnLerp: 10
+  paddleRotLerp: 10
+  paddlePosLerp: 12
+  deadzone: 0.02
+  distanceMeters: 0
+  paddleCount: 0
 --- !u!114 &5851851833860672889
 MonoBehaviour:
   m_ObjectHideFlags: 0

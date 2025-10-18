@@ -1,5 +1,6 @@
 using System;
 using RageRunGames.KayakController;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -8,12 +9,13 @@ public class PlayerMovementController : MonoBehaviour {
     [Header("Arc space (axes used for rotation)")]
     public Transform arcFrameTransform; // 비우면 Paddle 축 기준
     
-    [FormerlySerializedAs("legL")] [Header("Input (Joy-Con mapped cubes)")]
+    [Header("Input (Joy-Con mapped cubes)")]
     public Transform joyconCubeLeft;
-    [FormerlySerializedAs("legR")] public Transform joyconCubeRight;
+    public Transform joyconCubeRight;
     public bool isInvertedLeft;    // false
     public bool isInvertedRight;   // false
-
+    private (float, float) _rawInputTuple;
+    
     [Header("Joy-Con Calibrate")] 
     public bool useAngleAutoCalibrator;       // true
     public KeyCode manualCalibrateKeyCode;    // Keycode.C
@@ -21,16 +23,16 @@ public class PlayerMovementController : MonoBehaviour {
     
     [Header("Counting / Thresholds")] 
     public float minCountAngle = 10f;
-    public float countResetAngle = 5f;
+    public float resetCountAngle = 5f;
     
     private bool _isAngleCalibrated; // false
     
-    private (bool, bool) _sideGateLockTuple;
-    private (float, float) _localJoyconXTuple;  // 다리 로컬 기준 (좌, 우)
+    private (bool, bool) _gateLockTuple;    // gateL, gateR
+    private (float, float) _localJoyconXTuple;  // 다리 로컬 기준 (좌, 우); _lx, _rx
     private (float, float) _worldJoyconXTuple;  // 다리 월드 기준 (좌, 우)
     private (float, float) _deltaAngleTuple;    // 다리 델타 각 (좌, 우)
-    private (float, float) _angleSumAbsTuple;   // 다리 각도 절대값 (좌, 우)
-    private (int, int) _movementCountTuple;     // 다리 움직임 카운팅 (좌, 우)
+    private (float, float) _angleSumAbsTuple;   // 다리 각도 절대값 (좌, 우); _sumLeft/RightAngleAbs
+    private (int, int) _movementCountTuple;     // 다리 움직임 카운팅 (좌, 우); _countLeft/Right
     
     public float LegMovementAvgAngleLeft 
         => (_movementCountTuple.Item1 > 0) ? (_angleSumAbsTuple.Item1 / _movementCountTuple.Item1) : 0f;
@@ -41,7 +43,7 @@ public class PlayerMovementController : MonoBehaviour {
     public int LegStrokeCountRight 
         => _movementCountTuple.Item2;
     
-    // TODO: 용도 확인 후 정리
+    // 다리 움직임 피크 계산
     private sbyte _domTrend;            // +1 up, -1 down, 0 hold
     private float _domXPrev;            // 왼쪽 다리가 더 많이 들렸는가? -> 그쪽으로 인식할까?
     private float _domBlend = 0.5f;
@@ -68,7 +70,7 @@ public class PlayerMovementController : MonoBehaviour {
     public bool enablePhysicsAssist = true;
 
     [Header("Water Level / Buoyancy")]
-    public float constantWaterLevel = 0f;
+    public float constantWaterLevel = 0f;   // TODO: Water Surface cs component
     public Transform[] buoyancyPoints;
     public float buoyancyStrength = 9.81f;
     public float buoyancyScale = 1.0f;
@@ -78,7 +80,7 @@ public class PlayerMovementController : MonoBehaviour {
     public float dragSpeedFactor = 0.05f;
     public float baseAngularDrag = 3.0f;
     public float angularDragFactor = 0.025f;
-    public float lateralDampingMul = 0.8f;
+    public float lateralDampingMultiply = 0.8f;
 
     [Header("Clamp / Upright")]
     public float maxVelocity = 6f;
@@ -103,18 +105,36 @@ public class PlayerMovementController : MonoBehaviour {
     public float yawTorqueFromDelta = 0.25f;    // 좌/우 Δ각 차이에 비례하는 약한 Yaw 토크
     public bool scaleYawByPropulsion = true;    // Yaw 토크를 추진량에 비례시킬지
 
-    private float _propulsion;   // 추친력
+    
+    // TODO: 코드 정리; UI 관련 외부 코드
+    [Header("Smoothing")]
+    public float dominantLerp    = 8f;
+    public float phaseSmoothUp   = 0.06f;
+    public float phaseSmoothDown = 0.18f;
+    public float returnLerp      = 10f;
+    public float paddleRotLerp   = 10f;
+    public float paddlePosLerp   = 12f;
+    public float deadzone        = 0.02f;
+    public int distanceMeters = 0; 
+    public int paddleCount = 0;
+    // public TMP_Text distanceText;
+    // public TMP_Text paddleCountText;
+    //--
+    
     
     private Animator _animator;
     private Rigidbody _rigidbody;
-
+    
+    private float _propulsion;   // 추친력
+    private float _fullAngleDeg = 20f;
+    
     
     private void Init() {
         this._animator = GetComponent<Animator>();
         this._rigidbody = GetComponent<Rigidbody>();
 
-        this._sideGateLockTuple.Item1 = false;
-        this._sideGateLockTuple.Item2 = false;
+        this._gateLockTuple.Item1 = false;
+        this._gateLockTuple.Item2 = false;
         this._isAngleCalibrated = false;
 
         if (this.useAngleAutoCalibrator && !this._isAngleCalibrated) {
@@ -136,60 +156,220 @@ public class PlayerMovementController : MonoBehaviour {
 
     private void FixedUpdate() {
         if (this.enablePhysicsAssist && this._rigidbody) {
-            // TODO: 코드 리뷰
-            // ApplyBuoyancyAssist(this._rigidbody);
-            // ApplyWaterDragAssist(this._rigidbody);
-            // ClampVelocities(this._rigidbody);
-            // UprightStabilization(this._rigidbody);
+            ApplyBuoyancyAssist(this._rigidbody);
+            ApplyWaterDragAssist(this._rigidbody);
+            ClampVelocities(this._rigidbody);
+            UprightStabilization(this._rigidbody);
         }
         
         // Δ각 기반 연속 전진 & Yaw 살짝.. 
-        if (this._propulsion > 1e-4f && this.propelTargetTransform) {
-            var forwardDirection = 
-                this.useWorldSpaceForward ? Vector3.forward : this.propelTargetTransform.forward;
-            var horizonForwardDirection = 
-                Vector3.ProjectOnPlane(forwardDirection, Vector3.up).normalized;
-            var forceMagnitude = this.propulsionGain * this._propulsion;
-            var delta = 
-                Mathf.Clamp(this._deltaAngleTuple.Item1 - this._deltaAngleTuple.Item2, -45f, 45f);
-            var yaw = this.yawTorqueFromDelta * (delta / 20f);  // TODO: 하드코딩
-
-            if (horizonForwardDirection.sqrMagnitude < 1e-6f) {
-                horizonForwardDirection = Vector3.forward;
-            }
-            
-            if (this.scaleYawByPropulsion) {
-                yaw *= this._propulsion;
-            }
-            
-            if (this.propelTargetTransform.TryGetComponent<Rigidbody>(out var rb) && rb.isKinematic == false) {
-                rb.AddForce(horizonForwardDirection * forceMagnitude, ForceMode.Force);
-
-                if (Mathf.Abs(yaw) > 1e-5f) {
-                    rb.AddForce(Vector3.up * yaw, ForceMode.Force);
-                }
-            }
-            else {
-                this.propelTargetTransform.position += horizonForwardDirection * (forceMagnitude * Time.fixedDeltaTime);
-
-                if (Mathf.Abs(yaw) > 1e-5f) {
-                    this.propelTargetTransform.Rotate(
-                        0f, yaw * Time.fixedDeltaTime, 0f, Space.World);
-                }
-            }
-        }
+        ApplyPropulsionAndYaw();
     }
     
     private void Update() {
-        if (!GameStarter.GameStarted) return;
+        if (!GameStarter.GameStarted) {
+            return;
+        }
         
         // 수동 보정
         if (Input.GetKeyDown(this.manualCalibrateKeyCode)) {
             JoyconCalibrator();
         }
         
-        // 입력 → Δ각
+        // Joycon 자이로 입력
+        JoyconGyroInput();
         
+        // 움직임 피크 지점 찾기; 피크 트렌드
+        PeakTrendCheck();
+        
+        // 위상값 계산
+        CalculatePhase();   // TODO: 애니메이션 처리 외에는 용도가?
+        
+        // 추진량 계산
+        CalculatePropulsion();
+        
+        // 피크 초기화
+        PeakTrendReset();
+    }
+
+    // TODO: 다른 클래스로 이전
+    private void JoyconGyroInput() {
+        // 로우 데이터 입력 → Δ각
+        this._rawInputTuple.Item1 = ReadLocalX(this.joyconCubeLeft, this.isInvertedLeft);
+        this._rawInputTuple.Item2 = ReadLocalX(this.joyconCubeRight, this.isInvertedRight);
+        
+        // 움직임 크기가 데드존 초과인가?
+        var deltaValueLeft = this._rawInputTuple.Item1 - this._localJoyconXTuple.Item1;
+        this._deltaAngleTuple.Item1 = Mathf.Abs(deltaValueLeft) < this.deadZoneDegree ? 0f : deltaValueLeft;
+        
+        var deltaValueRight = this._rawInputTuple.Item2 - this._localJoyconXTuple.Item2;
+        this._deltaAngleTuple.Item2 = Mathf.Abs(deltaValueRight) < this.deadZoneDegree ? 0f : deltaValueRight;
+    }
+    
+    // 움직임 피크 지점 찾기; 피크 트렌드
+    private void PeakTrendCheck() {
+        var leftDominant = Mathf.Abs(this._deltaAngleTuple.Item1) >= Mathf.Abs(this._deltaAngleTuple.Item2);
+        var domX = leftDominant ? this._deltaAngleTuple.Item1 : this._deltaAngleTuple.Item2;
+        var magPrev = Mathf.Abs(this._domXPrev);
+        var magCurr = Mathf.Abs(domX);
+        var domTrendNow =
+            (magCurr > magPrev + 0.5f) ? (sbyte)+1 :
+            (magCurr < magPrev - 0.5f) ? (sbyte)-1 :
+            this._domTrend;
+        
+        if (this._domTrend == +1 && domTrendNow == -1) {    // Peak!
+            this._peakDomAngle = this._domXPrev;
+            this._peakDomSide  = leftDominant ? "Left" : "Right";
+            
+            TryTrigger(this._peakDomSide == "Left", Mathf.Abs(_peakDomAngle));
+        }
+        
+        this._domTrend = domTrendNow;
+        this._domXPrev = domX;
+    }
+    
+    private void TryTrigger(bool leftSide, float angleAbsDeg) {
+        if (angleAbsDeg < this.minCountAngle) {
+            return;
+        }
+
+        if (leftSide) {
+            if (this._gateLockTuple.Item1) {
+                return;
+            }
+            
+            this._gateLockTuple.Item1 = true;
+        }
+        else {
+            if (this._gateLockTuple.Item2) {
+                return;
+            }
+
+            this._gateLockTuple.Item2 = true;
+        }
+        
+        ProcessStroke(leftSide, angleAbsDeg);
+    }
+    
+    // 스트로크 처리 -> 이동 거리, 통계(거리, 패들 횟수) 계산 
+    private void ProcessStroke(bool leftSide, float angleAbsDeg) {
+        var addDist = Mathf.RoundToInt(angleAbsDeg / 10f);
+        
+        if (addDist < 1) {
+            addDist = 1;
+        }
+
+        this.distanceMeters += addDist;
+        this.paddleCount += 1;
+
+        if (leftSide) {
+            this._angleSumAbsTuple.Item1 += angleAbsDeg; 
+            this._movementCountTuple.Item1++;
+        }
+        else {
+            this._angleSumAbsTuple.Item2 += angleAbsDeg; 
+            this._movementCountTuple.Item2++;
+        }
+        
+        // RefreshStatsUI();
+    }
+
+    // 위상값 계산 (0 ~ 1)
+    private void CalculatePhase() {
+        var target = Mathf.Clamp01(Mathf.Abs(this._domXPrev) / Mathf.Max(1f, this._fullAngleDeg));
+        var smoothTime = (this._domTrend == -1) ? this.phaseSmoothDown : this.phaseSmoothUp;
+        this._phase = 
+            Mathf.SmoothDamp(_phase, target, ref _phaseVel, Mathf.Max(1e-3f, smoothTime));
+
+        var strength = this._phase;
+        
+        if (strength < this.deadzone) {
+            strength = 0f;
+        }
+        
+        var theta = strength * Mathf.PI;
+        var sinT  = Mathf.Sin(theta);
+        var cosT  = Mathf.Cos(theta);
+    }
+
+    // 추진량 계산
+    private void CalculatePropulsion() {
+        var drive = 0f;
+        var absDom = 
+            Mathf.Abs(this._peakDomSide == "Left" ? this._localJoyconXTuple.Item1 : this._localJoyconXTuple.Item2);
+        
+        if (absDom > this.deadZoneDegree) {
+            drive = 
+                Mathf.InverseLerp(this.deadZoneDegree, Mathf.Max(this.deadZoneDegree + 1f, this._fullAngleDeg), absDom);
+        }
+
+        var dt = Mathf.Max(Time.deltaTime, 1e-4f);
+        var a  = 1f - Mathf.Exp(-dt / Mathf.Max(1e-4f, this.propulsionSmoothing));
+        
+        this._propulsion = Mathf.Lerp(this._propulsion, drive, a);
+    }
+
+    private void PeakTrendReset() {
+        var absLeftDeg = Mathf.Abs(this._localJoyconXTuple.Item1);
+        var absRightDeg = Mathf.Abs(this._localJoyconXTuple.Item2);
+
+        if (this._gateLockTuple.Item1 && absLeftDeg <= this.resetCountAngle) {
+            this._gateLockTuple.Item1 = false;
+        }
+
+        if (this._gateLockTuple.Item2 && absRightDeg <= resetCountAngle) {
+            this._gateLockTuple.Item2 = false;
+        }
+    }
+    
+    private void StrokeProcessReset() {
+        this.distanceMeters = 0;
+        this.paddleCount = 0;
+        this._angleSumAbsTuple.Item1 = 0f;
+        this._angleSumAbsTuple.Item2 = 0f;
+        this._movementCountTuple.Item1 = 0;
+        this._movementCountTuple.Item2 = 0;
+        this._gateLockTuple.Item1 = false;
+        this._gateLockTuple.Item2 = false;
+    }
+    
+    private void ApplyPropulsionAndYaw() {
+        if (!(this._propulsion > 1e-4f) || !this.propelTargetTransform) {
+            return;
+        }
+        
+        var forwardDirection = 
+            this.useWorldSpaceForward ? Vector3.forward : this.propelTargetTransform.forward;
+        var horizonForwardDirection = 
+            Vector3.ProjectOnPlane(forwardDirection, Vector3.up).normalized;
+        var forceMagnitude = this.propulsionGain * this._propulsion;
+        var delta = 
+            Mathf.Clamp(this._deltaAngleTuple.Item1 - this._deltaAngleTuple.Item2, -45f, 45f);
+        var yaw = this.yawTorqueFromDelta * (delta / this._fullAngleDeg);
+
+        if (horizonForwardDirection.sqrMagnitude < 1e-6f) {
+            horizonForwardDirection = Vector3.forward;
+        }
+            
+        if (this.scaleYawByPropulsion) {
+            yaw *= this._propulsion;
+        }
+            
+        if (this.propelTargetTransform.TryGetComponent<Rigidbody>(out var rb) && rb.isKinematic == false) {
+            rb.AddForce(horizonForwardDirection * forceMagnitude, ForceMode.Force);
+
+            if (Mathf.Abs(yaw) > 1e-5f) {
+                rb.AddForce(Vector3.up * yaw, ForceMode.Force);
+            }
+        }
+        else {
+            this.propelTargetTransform.position += horizonForwardDirection * (forceMagnitude * Time.fixedDeltaTime);
+
+            if (Mathf.Abs(yaw) > 1e-5f) {
+                this.propelTargetTransform.Rotate(
+                    0f, yaw * Time.fixedDeltaTime, 0f, Space.World);
+            }
+        }
     }
     
     private void JoyconCalibrator() {
@@ -201,7 +381,7 @@ public class PlayerMovementController : MonoBehaviour {
         this._worldJoyconXTuple.Item1 = ReadWorldX(this.joyconCubeLeft, this.isInvertedLeft);
         this._worldJoyconXTuple.Item2 = ReadWorldX(this.joyconCubeRight, this.isInvertedRight);
 
-        this._sideGateLockTuple.Item1 = this._sideGateLockTuple.Item2 = false;
+        this._gateLockTuple.Item1 = this._gateLockTuple.Item2 = false;
         
         this._domXPrev = 0f;
         this._domTrend = 0;
@@ -211,88 +391,109 @@ public class PlayerMovementController : MonoBehaviour {
         this._isAngleCalibrated = true;
     }
     
-    
-    // TODO: 코드 리뷰
-    // void ApplyBuoyancyAssist(Rigidbody rb) {
-    //     if (this.buoyancyPoints is { Length: > 0 }) {
-    //         foreach (var p in this.buoyancyPoints) {
-    //             if (!p) continue;
-    //             float depth = ConstantWaterLevel - p.position.y;
-    //             if (depth > 0f)
-    //                 rb.AddForceAtPosition(Vector3.up * depth * BuoyancyStrength * BuoyancyScale, p.position, ForceMode.Acceleration);
-    //         }
-    //     }
-    //     else
-    //     {
-    //         float depth = ConstantWaterLevel - rb.worldCenterOfMass.y;
-    //         if (depth > 0f)
-    //             rb.AddForce(Vector3.up * depth * BuoyancyStrength * BuoyancyScale, ForceMode.Acceleration);
-    //     }
-    // }
-    //
-    // void ApplyWaterDragAssist(Rigidbody rb)
-    // {
-    //     float speed = rb.velocity.magnitude;
-    //     rb.drag = BaseDrag + speed * DragSpeedFactor;
-    //
-    //     float angSpeed = rb.angularVelocity.magnitude;
-    //     rb.angularDrag = BaseAngularDrag + angSpeed * AngularDragFactor;
-    //
-    //     // 로컬 X 횡미끄럼 억제
-    //     Vector3 localV = rb.transform.InverseTransformDirection(rb.velocity);
-    //     localV.x *= Mathf.Clamp01(LateralDampingMul);
-    //     rb.velocity = rb.transform.TransformDirection(localV);
-    // }
-    //
-    // void ClampVelocities(Rigidbody rb)
-    // {
-    //     if (rb.velocity.magnitude > MaxVelocity)
-    //         rb.velocity = rb.velocity.normalized * MaxVelocity;
-    //
-    //     if (rb.angularVelocity.magnitude > MaxAngularVelocity)
-    //         rb.angularVelocity = rb.angularVelocity.normalized * MaxAngularVelocity;
-    // }
-    //
-    // void UprightStabilization(Rigidbody rb)
-    // {
-    //     Vector3 desiredFwdOnPlane =
-    //         UseWorldSpaceForward ? Vector3.ProjectOnPlane(Vector3.forward, Vector3.up)
-    //                              : Vector3.ProjectOnPlane(rb.transform.forward, Vector3.up);
-    //     if (desiredFwdOnPlane.sqrMagnitude < 1e-6f) desiredFwdOnPlane = Vector3.forward;
-    //
-    //     Quaternion targetRot = Quaternion.LookRotation(desiredFwdOnPlane.normalized, Vector3.up);
-    //
-    //     float tilt = Vector3.Angle(rb.transform.up, Vector3.up);
-    //     if (tilt < UprightStartAngleDeg) return;
-    //
-    //     Quaternion delta = targetRot * Quaternion.Inverse(rb.rotation);
-    //     delta.ToAngleAxis(out float angleDeg, out Vector3 axis);
-    //     if (angleDeg > 180f) angleDeg -= 360f;
-    //     float angleRad = angleDeg * Mathf.Deg2Rad;
-    //
-    //     Vector3 torque = axis.normalized * (angleRad * UprightStability)
-    //                    - rb.angularVelocity * UprightAngularDamping;
-    //
-    //     rb.AddTorque(torque, ForceMode.Acceleration);
-    // }
+    void ApplyBuoyancyAssist(Rigidbody rb) {
+        if (this.buoyancyPoints is { Length: > 0 }) {
+            foreach (var point in this.buoyancyPoints) {
+                if (point) {
+                    var depth = this.constantWaterLevel - point.position.y;
+                
+                    if (depth > 0f) {
+                        rb.AddForceAtPosition(
+                            Vector3.up * (depth * this.buoyancyStrength * this.buoyancyScale), 
+                            point.position, 
+                            ForceMode.Acceleration);
+                    }
+                }
+            }
+        }
+        else {
+            var depth = this.constantWaterLevel - rb.worldCenterOfMass.y;
 
+            if (depth > 0f) {
+                rb.AddForce(Vector3.up * (depth * this.buoyancyStrength * this.buoyancyScale), ForceMode.Acceleration);
+            }
+        }
+    }
     
+    void ApplyWaterDragAssist(Rigidbody rb) {
+        var speed = rb.velocity.magnitude;
+        var angSpeed = rb.angularVelocity.magnitude;
+        var localV = rb.transform.InverseTransformDirection(rb.velocity);
+
+        rb.drag = this.baseDrag + (speed * this.dragSpeedFactor);
+        rb.angularDrag = this.baseAngularDrag + (angSpeed * this.angularDragFactor);
     
+        // 로컬 X 횡미끄럼 억제
+        localV.x *= Mathf.Clamp01(this.lateralDampingMultiply);
+        rb.velocity = rb.transform.TransformDirection(localV);
+    }
     
+    void ClampVelocities(Rigidbody rb) {
+        if (rb.velocity.magnitude > this.maxVelocity) {
+            rb.velocity = rb.velocity.normalized * this.maxVelocity;
+        }
+
+        if (rb.angularVelocity.magnitude > this.maxAngularVelocity) {
+            rb.angularVelocity = rb.angularVelocity.normalized * this.maxAngularVelocity;
+        }
+    }
     
-    private float ReadLocalX(Transform t, bool invert)
-    {
-        if (!t) return 0f;
-        float x = t.localEulerAngles.x;
-        if (x > 180f) x -= 360f;
+    void UprightStabilization(Rigidbody rb) {
+        var worldForwardOnPlane = Vector3.ProjectOnPlane(Vector3.forward, Vector3.up);
+        var localForwardOnPlane = Vector3.ProjectOnPlane(rb.transform.forward, Vector3.up);
+        var desiredForwardOnPlane = this.useWorldSpaceForward ? worldForwardOnPlane : localForwardOnPlane;
+
+        if (desiredForwardOnPlane.sqrMagnitude < 1e-6f) {
+            desiredForwardOnPlane = Vector3.forward;
+        }
+    
+        var targetRot = Quaternion.LookRotation(desiredForwardOnPlane.normalized, Vector3.up);
+        var tiltAngle = Vector3.Angle(rb.transform.up, Vector3.up);
+
+        if (tiltAngle < this.uprightStartAngleDeg) {
+            return;
+        }
+    
+        var delta = targetRot * Quaternion.Inverse(rb.rotation);
+        
+        delta.ToAngleAxis(out var angleDeg, out var axis);
+
+        if (angleDeg > 180f) {
+            angleDeg -= 360f;
+        }
+        
+        var angleRad = angleDeg * Mathf.Deg2Rad;
+        var torque = 
+            axis.normalized * (angleRad * this.uprightStability) - rb.angularVelocity * this.uprightAngularDamping;
+    
+        rb.AddTorque(torque, ForceMode.Acceleration);
+    }
+    
+    private float ReadLocalX(Transform t, bool invert) {
+        if (!t) {
+            return 0f;
+        }
+        
+        var x = t.localEulerAngles.x;
+
+        if (x > 180f) {
+            x -= 360f;
+        }
+        
         return invert ? -x : x;
     }
 
-    private float ReadWorldX(Transform t, bool invert)
-    {
-        if (!t) return 0f;
-        float x = t.eulerAngles.x;
-        if (x > 180f) x -= 360f;
+    private float ReadWorldX(Transform t, bool invert) {
+        if (!t) {
+            return 0f;
+        }
+        
+        var x = t.eulerAngles.x;
+        
+        if (x > 180f) {
+            x -= 360f;
+        }
+        
         return invert ? -x : x;
     }
 }
