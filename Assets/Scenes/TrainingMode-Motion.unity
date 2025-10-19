@@ -18377,8 +18377,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   joyconCubeLeft: {fileID: 1079016496}
   joyconCubeRight: {fileID: 90621265}
-  isInvertedLeft: 1
-  isInvertedRight: 1
+  isInvertedLeft: 0
+  isInvertedRight: 0
   useAngleAutoCalibrator: 1
   manualCalibrateKeyCode: 99
   deadZoneDegree: 2
@@ -18408,7 +18408,7 @@ MonoBehaviour:
   propelTargetTransform: {fileID: 5851851833860672887}
   useWorldSpaceForward: 0
   propulsionDeadBandDeg: 3
-  propulsionGain: 1.2
+  propulsionGain: 10
   propulsionSmoothing: 0.15
   yawTorqueFromDelta: 0.25
   scaleYawByPropulsion: 1

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMovementController : MonoBehaviour {
@@ -23,7 +24,7 @@ public class PlayerMovementController : MonoBehaviour {
     
     private bool _isAngleCalibrated; // false
     
-    private (bool, bool) _gateLockTuple;    // gateL, gateR
+    private (bool, bool) _gateLockTuple;    // gateL, gateR; gate -> 한 번만 카운트하도록 제한하는 스위치
     private (float, float) _localJoyconXTuple;  // 다리 로컬 기준 (좌, 우); _baseLX, _baseRX
     private (float, float) _worldJoyconXTuple;  // 다리 월드 기준 (좌, 우)
     private (float, float) _deltaAngleTuple;    // 다리 델타 각 (좌, 우); _lx, _rx
@@ -97,12 +98,12 @@ public class PlayerMovementController : MonoBehaviour {
     [Header("Angle-driven Propulsion")]
     private float _propulsion;                  // 추친력
     public float propulsionDeadBandDeg = 3f;    // Δ각이 이 값(도) 미만이면 전진 힘 0
-    public float propulsionGain = 1.2f;         // 전진 힘 스케일(값↑ = 더 세게)
+    public float propulsionGain = 10f;          // 전진 힘 스케일(값↑ = 더 세게)
     public float propulsionSmoothing = 0.15f;   // Δ각→전진 힘 저역통과(초)
     public float yawTorqueFromDelta = 0.25f;    // 좌/우 Δ각 차이에 비례하는 약한 Yaw 토크
     public bool scaleYawByPropulsion = true;    // Yaw 토크를 추진량에 비례시킬지
-    
-    
+    public float fullAngleDeg = 20f;
+
     [Header("Smoothing")]
     // public float dominantLerp    = 8f;
     public float phaseSmoothUp   = 0.06f;
@@ -117,11 +118,8 @@ public class PlayerMovementController : MonoBehaviour {
     // public TMP_Text paddleCountText;
     //--
     
-    
     private Animator _animator;
     private Rigidbody _rigidbody;
-    
-    private float _fullAngleDeg = 20f;
     
     
     private void Init() {
@@ -162,9 +160,9 @@ public class PlayerMovementController : MonoBehaviour {
     }
     
     private void Update() {
-        // if (!GameStarter.GameStarted) {
-        //     return;
-        // }
+        if (!GameStarter.GameStarted) {
+            return;
+        }
         
         // 수동 보정
         if (Input.GetKeyDown(this.manualCalibrateKeyCode)) {
@@ -182,9 +180,6 @@ public class PlayerMovementController : MonoBehaviour {
         
         // 추진량 계산
         CalculatePropulsion();
-        
-        // 피크 초기화
-        PeakTrendReset();
     }
 
     // TODO: 다른 클래스로 이전
@@ -225,6 +220,7 @@ public class PlayerMovementController : MonoBehaviour {
         this._domXPrev = domX;
     }
     
+    // 게이트 해제; gate -> 한 번만 카운트하도록 제한하는 스위치
     private void TryTrigger(bool leftSide, float angleAbsDeg) {
         if (angleAbsDeg < this.minCountAngle) {
             return;
@@ -275,7 +271,7 @@ public class PlayerMovementController : MonoBehaviour {
 
     // 위상값 계산 (0 ~ 1)
     private void CalculatePhase() {
-        var target = Mathf.Clamp01(Mathf.Abs(this._domXPrev) / Mathf.Max(1f, this._fullAngleDeg));
+        var target = Mathf.Clamp01(Mathf.Abs(this._domXPrev) / Mathf.Max(1f, this.fullAngleDeg));
         var smoothTime = (this._domTrend == -1) ? this.phaseSmoothDown : this.phaseSmoothUp;
         this._phase = 
             Mathf.SmoothDamp(_phase, target, ref _phaseVel, Mathf.Max(1e-3f, smoothTime));
@@ -298,26 +294,23 @@ public class PlayerMovementController : MonoBehaviour {
             Mathf.Abs(this._peakDomSide == "Left" ? this._deltaAngleTuple.Item1 : this._deltaAngleTuple.Item2);
         
         if (absDom > this.propulsionDeadBandDeg) {
-            drive = 
-                Mathf.InverseLerp(this.propulsionDeadBandDeg, Mathf.Max(this.propulsionDeadBandDeg + 1f, this._fullAngleDeg), absDom);
+            drive = Mathf.InverseLerp(
+                this.propulsionDeadBandDeg, 
+                Mathf.Max(this.propulsionDeadBandDeg + 1f, this.fullAngleDeg), 
+                absDom);
         }
-
+        
         var dt = Mathf.Max(Time.deltaTime, 1e-4f);
         var t  = 1f - Mathf.Exp(-dt / Mathf.Max(1e-4f, this.propulsionSmoothing));
         
         this._propulsion = Mathf.Lerp(this._propulsion, drive, t);
         
-    }
-
-    private void PeakTrendReset() {
-        var absLeftDeg = Mathf.Abs(this._deltaAngleTuple.Item1);
-        var absRightDeg = Mathf.Abs(this._deltaAngleTuple.Item2);
-
-        if (this._gateLockTuple.Item1 && absLeftDeg <= this.resetCountAngle) {
+        // 피크 초기화
+        if (this._gateLockTuple.Item1 && Mathf.Abs(this._deltaAngleTuple.Item1) <= this.resetCountAngle) {
             this._gateLockTuple.Item1 = false;
         }
 
-        if (this._gateLockTuple.Item2 && absRightDeg <= resetCountAngle) {
+        if (this._gateLockTuple.Item2 && Mathf.Abs(this._deltaAngleTuple.Item2) <= resetCountAngle) {
             this._gateLockTuple.Item2 = false;
         }
     }
@@ -333,38 +326,45 @@ public class PlayerMovementController : MonoBehaviour {
         this._gateLockTuple.Item2 = false;
     }
     
+    // Δ각 기반 연속 전진 & Yaw 살짝.. 
     private void ApplyPropulsionAndYaw() {
         if (!(this._propulsion > 1e-4f) || !this.propelTargetTransform) {
             return;
         }
-        
-        var forwardDirection = 
-            this.useWorldSpaceForward ? Vector3.forward : this.propelTargetTransform.forward;
+
+        var forwardDirection = this.useWorldSpaceForward ? Vector3.forward : this.propelTargetTransform.forward;
         var horizonForwardDirection = 
             Vector3.ProjectOnPlane(forwardDirection, Vector3.up).normalized;
-        var forceMagnitude = this.propulsionGain * this._propulsion;
-        var delta = 
-            Mathf.Clamp(this._deltaAngleTuple.Item1 - this._deltaAngleTuple.Item2, -45f, 45f);
-        var yaw = this.yawTorqueFromDelta * (delta / this._fullAngleDeg);
-
+        
         if (horizonForwardDirection.sqrMagnitude < 1e-6f) {
             horizonForwardDirection = Vector3.forward;
-        }
-            
-        if (this.scaleYawByPropulsion) {
-            yaw *= this._propulsion;
-        }
-            
+        }    
+        
+        var forceMagnitude = this.propulsionGain * this._propulsion;
+        
+        // 회전 처리
         if (this.propelTargetTransform.TryGetComponent<Rigidbody>(out var rb) && rb.isKinematic == false) {
             rb.AddForce(horizonForwardDirection * forceMagnitude, ForceMode.Force);
+            
+            var delta = 
+                Mathf.Clamp(this._deltaAngleTuple.Item2 - this._deltaAngleTuple.Item1, -45f, 45f);
+            var yaw = this.yawTorqueFromDelta * (delta / this.fullAngleDeg);
+
+            if (this.scaleYawByPropulsion) {
+                yaw *= this._propulsion;
+            }
 
             if (Mathf.Abs(yaw) > 1e-5f) {
-                rb.AddForce(Vector3.up * yaw, ForceMode.Force);
+                rb.AddTorque(Vector3.up * yaw, ForceMode.Force);
             }
         }
         else {
             this.propelTargetTransform.position += horizonForwardDirection * (forceMagnitude * Time.fixedDeltaTime);
 
+            var delta = 
+                Mathf.Clamp(this._deltaAngleTuple.Item2 - this._deltaAngleTuple.Item1, -45f, 45f);
+            var yaw = this.yawTorqueFromDelta * (delta / this.fullAngleDeg);
+            
             if (Mathf.Abs(yaw) > 1e-5f) {
                 this.propelTargetTransform.Rotate(
                     0f, yaw * Time.fixedDeltaTime, 0f, Space.World);
@@ -372,6 +372,7 @@ public class PlayerMovementController : MonoBehaviour {
         }
     }
     
+    // 조이콘 입력 보정자
     private void JoyconCalibrator() {
         // Joycon 로컬 X 값
         this._localJoyconXTuple.Item1 = ReadLocalX(this.joyconCubeLeft, this.isInvertedLeft);
@@ -391,6 +392,7 @@ public class PlayerMovementController : MonoBehaviour {
         this._isAngleCalibrated = true;
     }
     
+    // 부력 시뮬레이션
     void ApplyBuoyancyAssist(Rigidbody rb) {
         if (this.buoyancyPoints is { Length: > 0 }) {
             foreach (var point in this.buoyancyPoints) {
@@ -415,6 +417,7 @@ public class PlayerMovementController : MonoBehaviour {
         }
     }
     
+    // 물 위 미끄러짐 시뮬레이션
     void ApplyWaterDragAssist(Rigidbody rb) {
         var speed = rb.velocity.magnitude;
         var angSpeed = rb.angularVelocity.magnitude;
@@ -428,6 +431,7 @@ public class PlayerMovementController : MonoBehaviour {
         rb.velocity = rb.transform.TransformDirection(localV);
     }
     
+    // 속도 제한
     void ClampVelocities(Rigidbody rb) {
         if (rb.velocity.magnitude > this.maxVelocity) {
             rb.velocity = rb.velocity.normalized * this.maxVelocity;
@@ -438,6 +442,7 @@ public class PlayerMovementController : MonoBehaviour {
         }
     }
     
+    // 카약 전복 방지
     void UprightStabilization(Rigidbody rb) {
         var worldForwardOnPlane = Vector3.ProjectOnPlane(Vector3.forward, Vector3.up);
         var localForwardOnPlane = Vector3.ProjectOnPlane(rb.transform.forward, Vector3.up);
@@ -469,6 +474,7 @@ public class PlayerMovementController : MonoBehaviour {
         rb.AddTorque(torque, ForceMode.Acceleration);
     }
     
+    // 로컬 X 값 읽기
     private float ReadLocalX(Transform t, bool invert) {
         if (!t) {
             return 0f;
@@ -483,6 +489,7 @@ public class PlayerMovementController : MonoBehaviour {
         return invert ? -x : x;
     }
 
+    // 월드 X 값 읽기
     private float ReadWorldX(Transform t, bool invert) {
         if (!t) {
             return 0f;

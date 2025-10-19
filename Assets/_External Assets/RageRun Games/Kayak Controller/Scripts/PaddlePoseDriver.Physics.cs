@@ -86,7 +86,7 @@ public partial class PaddlePoseDriver
             if (horizFwd.sqrMagnitude < 1e-6f) horizFwd = Vector3.forward;
 
             float forceMag = PropulsionGain * _propulsion;
-
+           
             if (PropelTarget.TryGetComponent<Rigidbody>(out var prb) && prb.isKinematic == false)
             {
                 prb.AddForce(horizFwd * forceMag, ForceMode.Force);
