@@ -1053,7 +1053,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &312519435
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18412,6 +18412,7 @@ MonoBehaviour:
   propulsionSmoothing: 0.15
   yawTorqueFromDelta: 0.25
   scaleYawByPropulsion: 1
+  fullAngleDeg: 20
   phaseSmoothUp: 0.06
   phaseSmoothDown: 0.18
   deadzone: 0.02
