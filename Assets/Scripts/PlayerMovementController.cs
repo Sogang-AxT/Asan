@@ -103,6 +103,14 @@ public class PlayerMovementController : MonoBehaviour {
     public bool scaleYawByPropulsion;           // Yaw 토크를 추진량에 비례시킬지;          // true
     public float fullAngleDeg;                  // 20f
     private float _propulsion;                  // 추친력
+    public float Propulsion => _propulsion;
+    
+    [Header("Input Thresholds")]
+    [Tooltip("이 값 '이상'으로 추진력이 들어와야 힘이 적용됩니다.")]
+    public float activationThreshold = 0.5f;
+
+    [Tooltip("추진력이 이 값 '미만'으로 떨어져야 다음 입력을 받을 수 있도록 리셋됩니다.")]
+    public float resetThreshold = 0.1f;
     
     [Header("Smoothing")]
     // public float dominantLerp = 8f;
@@ -116,9 +124,11 @@ public class PlayerMovementController : MonoBehaviour {
     public int paddleCount;                 // 0
     // public TMP_Text distanceText;
     // public TMP_Text paddleCountText;
-    
+
     private Rigidbody _rigidbody;
-    
+    private bool _leftDominant;
+    public bool LeftDominant => _leftDominant;
+    private bool _propulsionHasBeenApplied;
     
     private void Init() {
         this._rigidbody = GetComponent<Rigidbody>();
@@ -126,11 +136,13 @@ public class PlayerMovementController : MonoBehaviour {
         this._gateLockTuple.Item1 = false;
         this._gateLockTuple.Item2 = false;
         this._isAngleCalibrated = false;
-
+        
         this._domBlend = 0.5f;
         this._peakDomSide = "-";
-        
+
+        this._propulsionHasBeenApplied = false;
         this._centerOfMassOffset = new Vector3(0f, -0.1f, 0f);
+
         
         if (this.useAngleAutoCalibrator && !this._isAngleCalibrated) {
             JoyconCalibrator();
@@ -183,8 +195,7 @@ public class PlayerMovementController : MonoBehaviour {
         // 추진량 계산
         CalculatePropulsion();
     }
-
-    // TODO: 다른 클래스로 이전
+    
     private void JoyconGyroInput() {
         // 로우 데이터 입력 → Δ각
         this._rawInputTuple.Item1 = ReadLocalX(this.joyconCubeLeft, this.isInvertedLeft);
@@ -202,8 +213,9 @@ public class PlayerMovementController : MonoBehaviour {
     
     // 움직임 피크 지점 찾기; 피크 트렌드
     private void PeakTrendCheck() {
-        var leftDominant = Mathf.Abs(this._deltaAngleTuple.Item1) >= Mathf.Abs(this._deltaAngleTuple.Item2);
-        var domX = leftDominant ? this._deltaAngleTuple.Item1 : this._deltaAngleTuple.Item2;
+        this._leftDominant = Mathf.Abs(this._deltaAngleTuple.Item1) >= Mathf.Abs(this._deltaAngleTuple.Item2);
+        
+        var domX = _leftDominant ? this._deltaAngleTuple.Item1 : this._deltaAngleTuple.Item2;
         var magPrev = Mathf.Abs(this._domXPrev);
         var magCurr = Mathf.Abs(domX);
         var domTrendNow =
@@ -213,7 +225,7 @@ public class PlayerMovementController : MonoBehaviour {
         
         if (this._domTrend == +1 && domTrendNow == -1) {    // Peak!
             this._peakDomAngle = this._domXPrev;
-            this._peakDomSide  = leftDominant ? "Left" : "Right";
+            this._peakDomSide = this._leftDominant ? "Left" : "Right";
             
             TryTrigger(this._peakDomSide == "Left", Mathf.Abs(_peakDomAngle));
         }
@@ -242,7 +254,7 @@ public class PlayerMovementController : MonoBehaviour {
 
             this._gateLockTuple.Item2 = true;
         }
-        
+
         ProcessStroke(leftSide, angleAbsDeg);
     }
     
@@ -330,23 +342,43 @@ public class PlayerMovementController : MonoBehaviour {
     
     // Δ각 기반 연속 전진 & Yaw 살짝.. 
     private void ApplyPropulsionAndYaw() {
-        if (!(this._propulsion > 1e-4f) || !this.propelTargetTransform) {
-            return;
+        if (this._propulsion < this.resetThreshold) {
+            this._propulsionHasBeenApplied = false;
         }
 
+        if (!this.propelTargetTransform) {
+            return;
+        }
+        
+        // if (!(this._propulsion > 1e-4f) || !this.propelTargetTransform) {
+        //     return;
+        // }
+        
+        if (this._propulsion < this.activationThreshold) {
+            return;
+        }
+        
+        // 추진력 적용
+        if (!this._propulsionHasBeenApplied) {
+            return;
+        }
+        
+        this._propulsionHasBeenApplied = true;
+            
+        Debug.Log(this._propulsionHasBeenApplied);
+        
         var forwardDirection = this.useWorldSpaceForward ? Vector3.forward : this.propelTargetTransform.forward;
         var horizonForwardDirection = 
             Vector3.ProjectOnPlane(forwardDirection, Vector3.up).normalized;
         
         if (horizonForwardDirection.sqrMagnitude < 1e-6f) {
             horizonForwardDirection = Vector3.forward;
-        }    
-        
+        }
+
         var forceMagnitude = this.propulsionGain * this._propulsion;
         
-        // 회전 처리
         if (this.propelTargetTransform.TryGetComponent<Rigidbody>(out var rb) && rb.isKinematic == false) {
-            rb.AddForce(horizonForwardDirection * forceMagnitude, ForceMode.Force);
+            rb.AddForce(horizonForwardDirection * forceMagnitude, ForceMode.Impulse);
             
             var delta = 
                 Mathf.Clamp(this._deltaAngleTuple.Item2 - this._deltaAngleTuple.Item1, -45f, 45f);

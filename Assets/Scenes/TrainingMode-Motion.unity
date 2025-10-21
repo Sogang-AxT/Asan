@@ -9009,6 +9009,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4486377498f54eb4ac1aa7234971a0c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerMovementController: {fileID: 5851851833860672888}
+  animator: {fileID: 7214145844483631617}
   rightPaddle: {fileID: 2175925502959182620}
   leftPaddle: {fileID: 5822658370280607167}
   rightParticleSystem: {fileID: 2004645664638304111}

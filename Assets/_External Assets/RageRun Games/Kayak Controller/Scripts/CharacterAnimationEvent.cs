@@ -1,8 +1,12 @@
-using System;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 public class CharacterAnimationEvent : MonoBehaviour {
+    private static readonly int Blend = Animator.StringToHash("Blend");
+    private static readonly int IsLeft = Animator.StringToHash("isLeft");
+
+    [SerializeField] private PlayerMovementController playerMovementController;
+    [SerializeField] private Animator animator;
+    
     [SerializeField] private Transform rightPaddle;
     [SerializeField] private Transform leftPaddle;
 
@@ -10,20 +14,22 @@ public class CharacterAnimationEvent : MonoBehaviour {
     [SerializeField] private ParticleSystem leftParticleSystem;
 
 
-    private Vector3 currentLeftPaddleVelocity;
-    private Vector3 currentRightPaddleVelocity;
+    // private Vector3 _currentLeftPaddleVelocity;
+    // private Vector3 _currentRightPaddleVelocity;
+    //
+    // private Vector3 _previousLeftPaddleVelocity;
+    // private Vector3 _previousRightPaddleVelocity;
+    //
+    // private Vector3 _smoothLeftPaddleVelocity;
+    // private Vector3 _smoothRightPaddleVelocity;
 
-    private Vector3 previousLeftPaddleVelocity;
-    private Vector3 previousRightPaddleVelocity;
-
-    private Vector3 smoothLeftPaddleVelocity;
-    private Vector3 smoothRightPaddleVelocity;
-
-    private float velocitySmoothing = 0.1f;
-
+    private float _velocitySmoothing = 0.1f;
+    private float _animationBlending;
+    
     
     private void Init() {
-        
+        this._animationBlending = 0.5f;
+        this.animator.SetFloat(Blend, 0.5f);
     }
 
     private void Awake() {
@@ -31,65 +37,38 @@ public class CharacterAnimationEvent : MonoBehaviour {
     }
 
     private void Update() {
-        Vector3 frameLeftVelocity = (leftPaddle.position - previousLeftPaddleVelocity) / Time.deltaTime;
-        smoothLeftPaddleVelocity = Vector3.Lerp(smoothLeftPaddleVelocity, frameLeftVelocity, velocitySmoothing);
-        currentLeftPaddleVelocity = smoothLeftPaddleVelocity;
-        previousLeftPaddleVelocity = leftPaddle.position;
-
+        // Vector3 frameLeftVelocity = (leftPaddle.position - _previousLeftPaddleVelocity) / Time.deltaTime;
+        // _smoothLeftPaddleVelocity = Vector3.Lerp(_smoothLeftPaddleVelocity, frameLeftVelocity, _velocitySmoothing);
+        // _currentLeftPaddleVelocity = _smoothLeftPaddleVelocity;
+        // _previousLeftPaddleVelocity = leftPaddle.position;
+        //
+        // Vector3 frameRightVelocity = (rightPaddle.position - _previousRightPaddleVelocity) / Time.deltaTime;
+        // _smoothRightPaddleVelocity = Vector3.Lerp(_smoothRightPaddleVelocity, frameRightVelocity, _velocitySmoothing);
+        // _currentLeftPaddleVelocity = _smoothRightPaddleVelocity;
+        // _previousRightPaddleVelocity = rightPaddle.position;
         
-        Vector3 frameRightVelocity = (rightPaddle.position - previousRightPaddleVelocity) / Time.deltaTime;
-        smoothRightPaddleVelocity = Vector3.Lerp(smoothRightPaddleVelocity, frameRightVelocity, velocitySmoothing);
-        currentLeftPaddleVelocity = smoothRightPaddleVelocity;
-        previousRightPaddleVelocity = rightPaddle.position;
-
+        this._animationBlending = this.playerMovementController.Propulsion; // 0f ~ 1f
+        this.animator.SetFloat(Blend, this._animationBlending);
+        this.animator.SetBool(IsLeft, this.playerMovementController.LeftDominant);
     }
 
-    //-- 아래 메서드는 현재 쓰이고 있지 않음. --//
-    public void ApplyRightPaddleStrikingForce() {
-        PlayOneShot(0.85f);
-        
+    public void ApplyRightPaddleVFX() {
         Collider[] colliders = Physics.OverlapSphere(rightPaddle.position, 5);
 
-        foreach (var col in colliders)
-        {
-            if (col.transform.CompareTag("Water"))
-            {
-               ApplyPaddleForce(rightPaddle.position, smoothRightPaddleVelocity);
+        foreach (var col in colliders) {
+            if (col.transform.CompareTag("Water")) {
+                leftParticleSystem.Play();
             }
         }
     }
     
-    public void ApplyLeftPaddleStrikingForce() {
-        PlayOneShot(-0.85f);
-
+    public void ApplyLeftPaddleVFX() {
         Collider[] colliders = Physics.OverlapSphere(leftPaddle.position, 5);
 
-        foreach (var col in colliders)
-        {
-            if (col.transform.CompareTag("Water"))
-            {
-                ApplyPaddleForce(leftPaddle.position, currentLeftPaddleVelocity);
+        foreach (var col in colliders) {
+            if (col.transform.CompareTag("Water")) {
+                rightParticleSystem.Play();
             }
         }
-    }
-
-    public void EnableLeftPaddleDeformer() {
-        leftParticleSystem.Play();
-    }
-
-    public void DisableLeftPaddleDeformer() {
-    }
-    
-    public void EnableRightPaddleDeformer() {
-        rightParticleSystem.Play();
-    }
-
-    public void DisableRightPaddleDeformer() {
-    }
-
-    private void PlayOneShot(float time) {
-    }
-
-    private void ApplyPaddleForce(Vector3 transform, Vector3 vel) {
     }
 }
