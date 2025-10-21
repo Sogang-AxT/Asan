@@ -19,12 +19,12 @@ public class PlayerMovementController : MonoBehaviour {
     public float deadZoneDegree;              // 2.0f
     
     [Header("Counting / Thresholds")] 
-    public float minCountAngle = 10f;
-    public float resetCountAngle = 5f;
+    public float minCountAngle;         // 10f
+    public float resetCountAngle;       // 5f
     
-    private bool _isAngleCalibrated; // false
+    private bool _isAngleCalibrated;    // false
     
-    private (bool, bool) _gateLockTuple;    // gateL, gateR; gate -> 한 번만 카운트하도록 제한하는 스위치
+    private (bool, bool) _gateLockTuple;        // gateL, gateR; gate -> 한 번만 카운트하도록 제한하는 스위치
     private (float, float) _localJoyconXTuple;  // 다리 로컬 기준 (좌, 우); _baseLX, _baseRX
     private (float, float) _worldJoyconXTuple;  // 다리 월드 기준 (좌, 우)
     private (float, float) _deltaAngleTuple;    // 다리 델타 각 (좌, 우); _lx, _rx
@@ -43,10 +43,10 @@ public class PlayerMovementController : MonoBehaviour {
     // 다리 움직임 피크 계산
     private sbyte _domTrend;            // +1 up, -1 down, 0 hold
     private float _domXPrev;            // 왼쪽 다리가 더 많이 들렸는가? -> 그쪽으로 인식할까?
-    private float _domBlend = 0.5f;
+    private float _domBlend;            // 0.5f
     private float _peakDomAngle;
     private float _phase, _phaseVel;
-    private string _peakDomSide = "-";
+    private string _peakDomSide;        // "-"
     
     // Animation shared bases
     // Vector3    _paddleBasePos;
@@ -67,75 +67,77 @@ public class PlayerMovementController : MonoBehaviour {
     public bool enablePhysicsAssist = true;
 
     [Header("Water Level / Buoyancy")]
-    public float constantWaterLevel = 0f;   // TODO: Water Surface cs component
+    public float constantWaterLevel;    // 0f // TODO: Water Surface cs component;
     public Transform[] buoyancyPoints;
-    public float buoyancyStrength = 9.81f;
-    public float buoyancyScale = 1.0f;
+    public float buoyancyStrength;      // 9.81f
+    public float buoyancyScale;         // 1.0f
 
     [Header("Drag / Damping")]
-    public float baseDrag = 1.5f;
-    public float dragSpeedFactor = 0.05f;
-    public float baseAngularDrag = 3.0f;
-    public float angularDragFactor = 0.025f;
-    public float lateralDampingMultiply = 0.8f;
+    public float baseDrag;                  // 1.5f
+    public float dragSpeedFactor;           // 0.05f
+    public float baseAngularDrag;           // 3.0f
+    public float angularDragFactor;         // 0.025f
+    public float lateralDampingMultiply;    // 0.8f;
 
     [Header("Clamp / Upright")]
-    public float maxVelocity = 6f;
-    public float maxAngularVelocity = 5f;
-    public float uprightStartAngleDeg = 5f;
-    public float uprightStability = 12f;
-    public float uprightAngularDamping = 0.1f;
+    public float maxVelocity;               // 6f
+    public float maxAngularVelocity;        // 5f
+    public float uprightStartAngleDeg;      // 5f
+    public float uprightStability;          // 12f
+    public float uprightAngularDamping;     // 0.1f
 
-    [Header("(Optional) Center of Mass")]
-    public Vector3 centerOfMassOffset = new Vector3(0f, -0.1f, 0f);
-    public bool applyCenterOfMass = true;
+    [Header("(Optional) Center of Mass")] 
+    public bool applyCenterOfMass;          // true
+    private Vector3 _centerOfMassOffset;
     
     [Header("Propel Target / Direction")]
-    public Transform propelTargetTransform;              // 전진 대상 (연속 힘 적용)
     // public Transform propelForwardRef;
-    public bool useWorldSpaceForward = false;
+    public Transform propelTargetTransform; // 전진 대상 (연속 힘 적용)
+    public bool useWorldSpaceForward;       // false
     
     [Header("Angle-driven Propulsion")]
+    public float propulsionDeadBandDeg;         // Δ각이 이 값(도) 미만이면 전진 힘 0;          // 3f
+    public float propulsionGain;                // 전진 힘 스케일(값↑ = 더 세게);             // 10f
+    public float propulsionSmoothing;           // Δ각→전진 힘 저역통과(초);                 // 0.15f
+    public float yawTorqueFromDelta;            // 좌/우 Δ각 차이에 비례하는 약한 Yaw 토크;   // 0.25f
+    public bool scaleYawByPropulsion;           // Yaw 토크를 추진량에 비례시킬지;          // true
+    public float fullAngleDeg;                  // 20f
     private float _propulsion;                  // 추친력
-    public float propulsionDeadBandDeg = 3f;    // Δ각이 이 값(도) 미만이면 전진 힘 0
-    public float propulsionGain = 10f;          // 전진 힘 스케일(값↑ = 더 세게)
-    public float propulsionSmoothing = 0.15f;   // Δ각→전진 힘 저역통과(초)
-    public float yawTorqueFromDelta = 0.25f;    // 좌/우 Δ각 차이에 비례하는 약한 Yaw 토크
-    public bool scaleYawByPropulsion = true;    // Yaw 토크를 추진량에 비례시킬지
-    public float fullAngleDeg = 20f;
-
+    
     [Header("Smoothing")]
-    // public float dominantLerp    = 8f;
-    public float phaseSmoothUp   = 0.06f;
-    public float phaseSmoothDown = 0.18f;
-    // public float returnLerp      = 10f;
-    // public float paddleRotLerp   = 10f;
-    // public float paddlePosLerp   = 12f;
-    public float deadzone        = 0.02f;
-    public int distanceMeters = 0; 
-    public int paddleCount = 0;
+    // public float dominantLerp = 8f;
+    public float phaseSmoothUp;             // 0.06f
+    public float phaseSmoothDown;           // 0.18f
+    // public float returnLerp = 10f;
+    // public float paddleRotLerp = 10f;
+    // public float paddlePosLerp = 12f;
+    public float deadzone;                  // 0.02f
+    public int distanceMeters;              // 0
+    public int paddleCount;                 // 0
     // public TMP_Text distanceText;
     // public TMP_Text paddleCountText;
-    //--
     
-    private Animator _animator;
     private Rigidbody _rigidbody;
     
     
     private void Init() {
-        this._animator = GetComponent<Animator>();
         this._rigidbody = GetComponent<Rigidbody>();
 
         this._gateLockTuple.Item1 = false;
         this._gateLockTuple.Item2 = false;
         this._isAngleCalibrated = false;
 
+        this._domBlend = 0.5f;
+        this._peakDomSide = "-";
+        
+        this._centerOfMassOffset = new Vector3(0f, -0.1f, 0f);
+        
         if (this.useAngleAutoCalibrator && !this._isAngleCalibrated) {
             JoyconCalibrator();
         }
         
         if (this.applyCenterOfMass && this._rigidbody) {
-            this._rigidbody.centerOfMass += this.centerOfMassOffset;
+            this._rigidbody.centerOfMass += this._centerOfMassOffset;
         }
 
         if (!this.propelTargetTransform) {

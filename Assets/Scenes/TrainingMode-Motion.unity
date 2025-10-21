@@ -9009,7 +9009,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4486377498f54eb4ac1aa7234971a0c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  kayakController: {fileID: 0}
   rightPaddle: {fileID: 2175925502959182620}
   leftPaddle: {fileID: 5822658370280607167}
   rightParticleSystem: {fileID: 2004645664638304111}
@@ -18403,7 +18402,6 @@ MonoBehaviour:
   uprightStartAngleDeg: 5
   uprightStability: 12
   uprightAngularDamping: 0.1
-  centerOfMassOffset: {x: 0, y: -0.1, z: 0}
   applyCenterOfMass: 1
   propelTargetTransform: {fileID: 5851851833860672887}
   useWorldSpaceForward: 0
@@ -22784,7 +22782,7 @@ Animator:
   m_GameObject: {fileID: 1409418154395458283}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 36078ab0369161e49a29d349ae3e0739, type: 3}
-  m_Controller: {fileID: 9100000, guid: a90e226ce203992419febcaf9063802e, type: 2}
+  m_Controller: {fileID: 9100000, guid: ac27956a9c0938546b64c06c001d789e, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
