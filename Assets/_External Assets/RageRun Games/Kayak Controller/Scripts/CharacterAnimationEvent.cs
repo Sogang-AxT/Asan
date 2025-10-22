@@ -47,9 +47,11 @@ public class CharacterAnimationEvent : MonoBehaviour {
         // _currentLeftPaddleVelocity = _smoothRightPaddleVelocity;
         // _previousRightPaddleVelocity = rightPaddle.position;
         
-        this._animationBlending = this.playerMovementController.Propulsion; // 0f ~ 1f
-        this.animator.SetFloat(Blend, this._animationBlending);
         this.animator.SetBool(IsLeft, this.playerMovementController.LeftDominant);
+
+        this._animationBlending = this.playerMovementController.Propulsion; // 0f ~ 1f * -1 or 1
+        
+        this.animator.SetFloat(Blend, this._animationBlending);
     }
 
     public void ApplyRightPaddleVFX() {

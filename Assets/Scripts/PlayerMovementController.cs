@@ -105,13 +105,6 @@ public class PlayerMovementController : MonoBehaviour {
     private float _propulsion;                  // 추친력
     public float Propulsion => _propulsion;
     
-    [Header("Input Thresholds")]
-    [Tooltip("이 값 '이상'으로 추진력이 들어와야 힘이 적용됩니다.")]
-    public float activationThreshold = 0.5f;
-
-    [Tooltip("추진력이 이 값 '미만'으로 떨어져야 다음 입력을 받을 수 있도록 리셋됩니다.")]
-    public float resetThreshold = 0.1f;
-    
     [Header("Smoothing")]
     // public float dominantLerp = 8f;
     public float phaseSmoothUp;             // 0.06f
@@ -128,7 +121,6 @@ public class PlayerMovementController : MonoBehaviour {
     private Rigidbody _rigidbody;
     private bool _leftDominant;
     public bool LeftDominant => _leftDominant;
-    private bool _propulsionHasBeenApplied;
     
     private void Init() {
         this._rigidbody = GetComponent<Rigidbody>();
@@ -140,7 +132,6 @@ public class PlayerMovementController : MonoBehaviour {
         this._domBlend = 0.5f;
         this._peakDomSide = "-";
 
-        this._propulsionHasBeenApplied = false;
         this._centerOfMassOffset = new Vector3(0f, -0.1f, 0f);
 
         
@@ -288,7 +279,8 @@ public class PlayerMovementController : MonoBehaviour {
         var target = Mathf.Clamp01(Mathf.Abs(this._domXPrev) / Mathf.Max(1f, this.fullAngleDeg));
         var smoothTime = (this._domTrend == -1) ? this.phaseSmoothDown : this.phaseSmoothUp;
         this._phase = 
-            Mathf.SmoothDamp(_phase, target, ref _phaseVel, Mathf.Max(1e-3f, smoothTime));
+            Mathf.SmoothDamp(
+                this._phase, target, ref this._phaseVel, Mathf.Max(1e-3f, smoothTime));
 
         var strength = this._phase;
         
@@ -310,12 +302,11 @@ public class PlayerMovementController : MonoBehaviour {
         if (absDom > this.propulsionDeadBandDeg) {
             drive = Mathf.InverseLerp(
                 this.propulsionDeadBandDeg, 
-                Mathf.Max(this.propulsionDeadBandDeg + 1f, this.fullAngleDeg), 
-                absDom);
+                Mathf.Max(this.propulsionDeadBandDeg + 1f, this.fullAngleDeg), absDom);
         }
         
         var dt = Mathf.Max(Time.deltaTime, 1e-4f);
-        var t  = 1f - Mathf.Exp(-dt / Mathf.Max(1e-4f, this.propulsionSmoothing));
+        var t = 1f - Mathf.Exp(-dt / Mathf.Max(1e-4f, this.propulsionSmoothing));
         
         this._propulsion = Mathf.Lerp(this._propulsion, drive, t);
         
@@ -324,7 +315,7 @@ public class PlayerMovementController : MonoBehaviour {
             this._gateLockTuple.Item1 = false;
         }
 
-        if (this._gateLockTuple.Item2 && Mathf.Abs(this._deltaAngleTuple.Item2) <= resetCountAngle) {
+        if (this._gateLockTuple.Item2 && Mathf.Abs(this._deltaAngleTuple.Item2) <= this.resetCountAngle) {
             this._gateLockTuple.Item2 = false;
         }
     }
@@ -342,31 +333,11 @@ public class PlayerMovementController : MonoBehaviour {
     
     // Δ각 기반 연속 전진 & Yaw 살짝.. 
     private void ApplyPropulsionAndYaw() {
-        if (this._propulsion < this.resetThreshold) {
-            this._propulsionHasBeenApplied = false;
-        }
-
-        if (!this.propelTargetTransform) {
-            return;
-        }
-        
-        // if (!(this._propulsion > 1e-4f) || !this.propelTargetTransform) {
-        //     return;
-        // }
-        
-        if (this._propulsion < this.activationThreshold) {
+        if (!(this._propulsion > 1e-4f) || !this.propelTargetTransform) {
             return;
         }
         
         // 추진력 적용
-        if (!this._propulsionHasBeenApplied) {
-            return;
-        }
-        
-        this._propulsionHasBeenApplied = true;
-            
-        Debug.Log(this._propulsionHasBeenApplied);
-        
         var forwardDirection = this.useWorldSpaceForward ? Vector3.forward : this.propelTargetTransform.forward;
         var horizonForwardDirection = 
             Vector3.ProjectOnPlane(forwardDirection, Vector3.up).normalized;
@@ -378,7 +349,7 @@ public class PlayerMovementController : MonoBehaviour {
         var forceMagnitude = this.propulsionGain * this._propulsion;
         
         if (this.propelTargetTransform.TryGetComponent<Rigidbody>(out var rb) && rb.isKinematic == false) {
-            rb.AddForce(horizonForwardDirection * forceMagnitude, ForceMode.Impulse);
+            rb.AddForce(horizonForwardDirection * forceMagnitude, ForceMode.Force);
             
             var delta = 
                 Mathf.Clamp(this._deltaAngleTuple.Item2 - this._deltaAngleTuple.Item1, -45f, 45f);
