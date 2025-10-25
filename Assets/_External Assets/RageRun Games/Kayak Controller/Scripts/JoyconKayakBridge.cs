@@ -293,7 +293,7 @@ public class JoyconKayakBridge : MonoBehaviour
         armed = true;
         smallReady = false;
         fullReady  = false;
-        // Debug.Log($"[JoyconKayakBridge-{side}] TOP baseline set: {baselineX:F1}");
+         Debug.Log($"[JoyconKayakBridge-{side}] TOP baseline set: {baselineX:F1}");
     }
 
     private float Normalize180(float angle)
