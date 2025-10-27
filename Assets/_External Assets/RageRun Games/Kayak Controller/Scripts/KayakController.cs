@@ -15,7 +15,6 @@ namespace RageRunGames.KayakController
     [RequireComponent(typeof(Rigidbody))]
     public class KayakController : MonoBehaviour
     {
-
         // === 애니메이션 타이머 ===
         [SerializeField] private float smallStrokeAnimDuration = 0.5f;
         private float smallLeftAnimTimer = 0f;
@@ -128,9 +127,12 @@ namespace RageRunGames.KayakController
 
         public bool IsPaddleInWater { get; set; } = false;
         public ForceOn ForceOn => forceOn;
+        
 // ====== 조이콘 탭 Yaw 임펄스 ======
 [SerializeField] private float tapYawImpulse = 2.0f;        // 풀 탭 회전 임펄스
 [SerializeField] private float smallTapYawImpulse = 1.0f;   // 스몰 탭 회전 임펄스
+
+
         private void Awake()
         {
             rb = GetComponent<Rigidbody>();
