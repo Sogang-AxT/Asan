@@ -6,12 +6,6 @@ public class CharacterAnimationEvent : MonoBehaviour {
 
     [SerializeField] private PlayerMovementController playerMovementController;
     [SerializeField] private Animator animator;
-    
-    [SerializeField] private Transform rightPaddle;
-    [SerializeField] private Transform leftPaddle;
-
-    [SerializeField] private ParticleSystem rightParticleSystem;
-    [SerializeField] private ParticleSystem leftParticleSystem;
 
 
     // private Vector3 _currentLeftPaddleVelocity;
@@ -50,27 +44,7 @@ public class CharacterAnimationEvent : MonoBehaviour {
         this.animator.SetBool(IsLeft, this.playerMovementController.LeftDominant);
 
         this._animationBlending = this.playerMovementController.Propulsion; // 0f ~ 1f * -1 or 1
-        
+   
         this.animator.SetFloat(Blend, this._animationBlending);
-    }
-
-    public void ApplyRightPaddleVFX() {
-        Collider[] colliders = Physics.OverlapSphere(rightPaddle.position, 5);
-
-        foreach (var col in colliders) {
-            if (col.transform.CompareTag("Water")) {
-                leftParticleSystem.Play();
-            }
-        }
-    }
-    
-    public void ApplyLeftPaddleVFX() {
-        Collider[] colliders = Physics.OverlapSphere(leftPaddle.position, 5);
-
-        foreach (var col in colliders) {
-            if (col.transform.CompareTag("Water")) {
-                rightParticleSystem.Play();
-            }
-        }
     }
 }
