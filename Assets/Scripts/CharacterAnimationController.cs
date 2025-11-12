@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class CharacterAnimationEvent : MonoBehaviour {
+public class CharacterAnimationController : MonoBehaviour {
     private static readonly int Blend = Animator.StringToHash("Blend");
     private static readonly int IsLeft = Animator.StringToHash("isLeft");
 
@@ -17,12 +17,13 @@ public class CharacterAnimationEvent : MonoBehaviour {
     // private Vector3 _smoothLeftPaddleVelocity;
     // private Vector3 _smoothRightPaddleVelocity;
 
-    private float _velocitySmoothing = 0.1f;
-    private float _animationBlending;
+    // private float _velocitySmoothing;
+    // private float _animationBlending;
     
     
     private void Init() {
-        this._animationBlending = 0.5f;
+        // this._velocitySmoothing = 0.1f;
+        // this._animationBlending = 0.5f;
         this.animator.SetFloat(Blend, 0.5f);
     }
 
@@ -42,9 +43,6 @@ public class CharacterAnimationEvent : MonoBehaviour {
         // _previousRightPaddleVelocity = rightPaddle.position;
         
         this.animator.SetBool(IsLeft, this.playerMovementController.LeftDominant);
-
-        this._animationBlending = this.playerMovementController.Propulsion; // 0f ~ 1f * -1 or 1
-   
-        this.animator.SetFloat(Blend, this._animationBlending);
+        this.animator.SetFloat(Blend, this.playerMovementController.Propulsion);
     }
 }
