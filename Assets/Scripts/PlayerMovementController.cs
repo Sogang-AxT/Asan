@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Serialization;
+using TMPro;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMovementController : MonoBehaviour {
@@ -35,10 +36,10 @@ public class PlayerMovementController : MonoBehaviour {
     //     => (_movementCountTuple.Item1 > 0) ? (_angleSumAbsTuple.Item1 / _movementCountTuple.Item1) : 0f;
     // public float LegMovementAvgAngleRight 
     //     => (_movementCountTuple.Item2 > 0) ? (_angleSumAbsTuple.Item2 / _movementCountTuple.Item2) : 0f;
-    // public int LegStrokeCountLeft
-    //     => _movementCountTuple.Item1;
-    // public int LegStrokeCountRight 
-    //     => _movementCountTuple.Item2;
+    public int LegStrokeCountLeft
+         => _movementCountTuple.Item1;
+    public int LegStrokeCountRight 
+         => _movementCountTuple.Item2;
     
     // 다리 움직임 피크 계산
     private sbyte _domTrend;            // +1 up, -1 down, 0 hold
@@ -115,8 +116,10 @@ public class PlayerMovementController : MonoBehaviour {
     public float deadzone;                  // 0.02f
     public int distanceMeters;              // 0
     public int paddleCount;                 // 0
-    // public TMP_Text distanceText;
-    // public TMP_Text paddleCountText;
+    public TMP_Text distanceText;
+    public TMP_Text paddleCountText;
+
+    [SerializeField] private ScoreManager scoreManager;
 
     private Rigidbody _rigidbody;
     private bool _leftDominant;
@@ -259,6 +262,13 @@ public class PlayerMovementController : MonoBehaviour {
 
         this.distanceMeters += addDist;
         this.paddleCount += 1;
+        distanceText.text = distanceMeters + "m";
+        paddleCountText.text = "x " + paddleCount;
+
+        if (scoreManager != null)
+        {
+            scoreManager.RecordStroke(leftSide, angleAbsDeg);
+        }
 
         if (leftSide) {
             this._angleSumAbsTuple.Item1 += angleAbsDeg; 
@@ -378,7 +388,7 @@ public class PlayerMovementController : MonoBehaviour {
     }
     
     // 조이콘 입력 보정자
-    private void JoyconCalibrator() {
+    public void JoyconCalibrator() {
         // Joycon 로컬 X 값
         this._localJoyconXTuple.Item1 = ReadLocalX(this.joyconCubeLeft, this.isInvertedLeft);
         this._localJoyconXTuple.Item2 = ReadLocalX(this.joyconCubeRight, this.isInvertedRight);
@@ -395,6 +405,7 @@ public class PlayerMovementController : MonoBehaviour {
         
         // 보정 완료 알림
         this._isAngleCalibrated = true;
+        Debug.Log("Calibration");
     }
     
     // 부력 시뮬레이션

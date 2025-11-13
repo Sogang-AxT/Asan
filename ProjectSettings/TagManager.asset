@@ -8,6 +8,7 @@ TagManager:
   - Obstacle
   - CinemachineTarget
   - HugeObstacle
+  - Kayak
   layers:
   - Default
   - TransparentFX
