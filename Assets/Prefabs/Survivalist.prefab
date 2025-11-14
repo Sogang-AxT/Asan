@@ -2013,7 +2013,7 @@ GameObject:
   - component: {fileID: 6766536238432138805}
   - component: {fileID: 6766536238432138804}
   m_Layer: 0
-  m_Name: Survivalist (1)
+  m_Name: Survivalist
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
