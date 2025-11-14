@@ -22,9 +22,11 @@ public class FinishBoxTrigger : MonoBehaviour
     [SerializeField] private PlayTimer timer;
 
     // 명시 참조(인스펙터에 플레이어의 컴포넌트를 넣어두면 가장 확실)
-    [Header("Stats Sources (optional, drop your player here)")]
-    [SerializeField] private PaddlePoseDriver poseSource;
-    [SerializeField] private KayakController kayakSource;
+    //[Header("Stats Sources (optional, drop your player here)")]
+    //[SerializeField] public PaddlePoseDriver poseSource;
+    //[SerializeField] public KayakController kayakSource;
+
+    public GameObject scoreManager;
 
     private bool triggered = false;
 
@@ -43,8 +45,10 @@ public class FinishBoxTrigger : MonoBehaviour
         if (!endUI)  { Debug.LogWarning("[Finish] EndTrainingUI missing"); return; }
         if (!timer)  { Debug.LogWarning("[Finish] PlayTimer missing");   return; }
 
+        scoreManager.GetComponent<ScoreManager>().isFinish = true;
+
         // ── 1) 통계 소스 결정 ────────────────────────────────────────────────
-        var pose  = poseSource;
+        /*var pose  = poseSource;
         var kayak = kayakSource;
 
         // A. 트리거로 들어온 쪽에서 먼저 찾기
@@ -95,7 +99,7 @@ public class FinishBoxTrigger : MonoBehaviour
         else
         {
             Debug.LogWarning("[Finish] No stats provider found (both PaddlePoseDriver and KayakController missing).");
-        }
+        }*/
 
         // ── 3) 타이머/사운드/표시 ───────────────────────────────────────────
         timer.Stop();
@@ -109,7 +113,7 @@ public class FinishBoxTrigger : MonoBehaviour
             audioSource.PlayOneShot(finishClip);
         }
 
-        endUI.Show(timer.ElapsedTime, distanceM, avgL, avgR, leftCnt, rightCnt);
+        //endUI.Show(timer.ElapsedTime, distanceM, avgL, avgR, leftCnt, rightCnt);
 
         GameStarter.GameStarted = false;
     }

@@ -21,7 +21,9 @@ public class GameStarter : MonoBehaviour
     public float fadeInSeconds = 1.5f;         // 0 이면 즉시 재생
     [Header("Audio (SFX)")]
     public AudioSource sfxSource;              // 효과음 재생용 AudioSource
-    public AudioClip startButtonSFX;  
+    public AudioClip startButtonSFX;
+
+    public PlayerMovementController player;
     void Start()
     {
         startButtonUI.SetActive(true);
@@ -73,6 +75,7 @@ public class GameStarter : MonoBehaviour
         // ▶ 게임 시작!
         Time.timeScale = 1f;
         GameStarted = true;
+        player.JoyconCalibrator();
 
         // ▶ BGM 재생 시작 (페이드인)
         StartBackgroundMusic();
