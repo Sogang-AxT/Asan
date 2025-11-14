@@ -2055,11 +2055,33 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8268138879980232139, guid: 9ca674853e00f3640b99059b28157574,
+        type: 3}
+      propertyPath: m_WarningMessage
+      value: "\nBinding warning: Some generic clip(s) animate transforms that are
+        already bound by a Humanoid avatar. These transforms can only be changed
+        by Humanoid clips.\n\tTransform 'Left_LowerArm'\n\tTransform 'Chest'\n\tTransform
+        'Skeleton'\n\tTransform 'Spine'\n\tTransform 'Right_Foot'\n\tTransform 'Right_LowerLeg'\n\tTransform
+        'UpperChest'\n\tTransform 'Left_Foot'\n\tTransform 'Left_UpperLeg'\n\tTransform
+        'Left_LowerLeg'\n\tand more ..."
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9ca674853e00f3640b99059b28157574, type: 3}
+--- !u!114 &813365935 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2360939234179528256, guid: 9ca674853e00f3640b99059b28157574,
+    type: 3}
+  m_PrefabInstance: {fileID: 813365934}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1c57b24f3689264f85150a836939f63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &871062610
 GameObject:
   m_ObjectHideFlags: 0
@@ -7807,6 +7829,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6766536239588846759}
   - component: {fileID: 6766536239588846758}
+  - component: {fileID: 6766536239588846760}
   m_Layer: 6
   m_Name: Dummy
   m_TagString: Untagged
@@ -7822,9 +7845,9 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6766536239588846752}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 0e55d5c42cc96404f872b45455603f8b, type: 3}
-  m_Controller: {fileID: 0}
+  m_Enabled: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: e76f7f876aea45b4aa57e558a222e85d, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -7857,6 +7880,23 @@ Transform:
   - {fileID: 6766536239087668072}
   m_Father: {fileID: 105347932}
   m_LocalEulerAnglesHint: {x: -90, y: -180, z: 0}
+--- !u!114 &6766536239588846760
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6766536239588846752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 953f846fbabb8f24ea5a8e6014c48292, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerMovementController: {fileID: 813365935}
+  thighL: {fileID: 6766536239299412655}
+  thighR: {fileID: 6766536239396049946}
+  maxRotationAngle: 30
+  rotationSpeed: 5
 --- !u!4 &6766536239644741123
 Transform:
   m_ObjectHideFlags: 0
