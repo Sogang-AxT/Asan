@@ -4078,6 +4078,7 @@ MonoBehaviour:
   fadeInSeconds: 1.5
   sfxSource: {fileID: 1925329976}
   startButtonSFX: {fileID: 8300000, guid: fdf6093311cc4874f9879e15bc10004a, type: 3}
+  player: {fileID: 1306594036}
 --- !u!4 &1381819784
 Transform:
   m_ObjectHideFlags: 0
@@ -7984,7 +7985,7 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6766536239588846752}
   m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 0e55d5c42cc96404f872b45455603f8b, type: 3}
+  m_Avatar: {fileID: 0}
   m_Controller: {fileID: 0}
   m_CullingMode: 1
   m_UpdateMode: 0
