@@ -124,6 +124,22 @@ public class PlayerMovementController : MonoBehaviour {
     private Rigidbody _rigidbody;
     private bool _leftDominant;
     public bool LeftDominant => _leftDominant;
+
+    // Expose per-leg instantaneous magnitudes for consumers that shouldn't rely on binary dominance
+    public float DeltaAngleLeftAbs => Mathf.Abs(this._deltaAngleTuple.Item1);
+    public float DeltaAngleRightAbs => Mathf.Abs(this._deltaAngleTuple.Item2);
+
+    // Map a delta angle magnitude to a 0..1 effort using the same thresholds as propulsion
+    public float MapDeltaToEffort(float absDelta)
+    {
+        if (absDelta <= this.propulsionDeadBandDeg)
+        {
+            return 0f;
+        }
+
+        var maxRef = Mathf.Max(this.propulsionDeadBandDeg + 1f, this.fullAngleDeg);
+        return Mathf.InverseLerp(this.propulsionDeadBandDeg, maxRef, absDelta);
+    }
     
     private void Init() {
         this._rigidbody = GetComponent<Rigidbody>();
@@ -278,10 +294,6 @@ public class PlayerMovementController : MonoBehaviour {
             this._angleSumAbsTuple.Item2 += angleAbsDeg; 
             this._movementCountTuple.Item2++;
         }
-        
-        // TODO: DEBUG
-        // Debug.Log($"[Stroke++] side={(leftSide ? "Left" : "Right")}, angleAbs={angleAbsDeg:0.0}°, +{addDist}m, count={this.paddleCount}");
-        // RefreshStatsUI();
     }
 
     // 위상값 계산 (0 ~ 1)
