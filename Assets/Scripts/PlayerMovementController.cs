@@ -4,8 +4,7 @@ using TMPro;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMovementController : MonoBehaviour {
-    [Header("Arc space (axes used for rotation)")]
-    // public Transform arcFrameTransform; // 비우면 Paddle 축 기준
+    public JoyconInputHandler InputHandler;
     
     [Header("Input (Joy-Con mapped cubes)")]
     public Transform joyconCubeLeft;
@@ -193,6 +192,10 @@ public class PlayerMovementController : MonoBehaviour {
             JoyconCalibrator();
         }
         
+        // if (this.InputHandler.accelLeft.x <= 0.1f || this.InputHandler.accelRight.x <= 0.1f) {
+        //     JoyconCalibrator();
+        // }
+        
         // Joycon 자이로 입력
         JoyconGyroInput();
         
@@ -200,7 +203,7 @@ public class PlayerMovementController : MonoBehaviour {
         PeakTrendCheck();
         
         // 위상값 계산
-        CalculatePhase();   // TODO: 애니메이션 처리 외에는 용도가?
+        CalculatePhase();
         
         // 추진량 계산
         CalculatePropulsion();
@@ -329,8 +332,19 @@ public class PlayerMovementController : MonoBehaviour {
         
         var dt = Mathf.Max(Time.deltaTime, 1e-4f);
         var t = 1f - Mathf.Exp(-dt / Mathf.Max(1e-4f, this.propulsionSmoothing));
-        
+
         this._propulsion = Mathf.Lerp(this._propulsion, drive, t);
+
+        if (this._peakDomSide == "Left") {
+            if (this.InputHandler.accelLeft.x <= 0.1f) {
+                this._propulsion = 0f;
+            }
+        }
+        else {
+            if (this.InputHandler.accelRight.x <= 0.1f) {
+                this._propulsion = 0f;
+            }
+        }
         
         // 피크 초기화
         if (this._gateLockTuple.Item1 && Mathf.Abs(this._deltaAngleTuple.Item1) <= this.resetCountAngle) {

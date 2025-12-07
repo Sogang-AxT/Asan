@@ -57,6 +57,12 @@ public class JoyconAccelVisualizer : MonoBehaviour
     private Vector3 lastFilteredAccelR = Vector3.zero;
     private Vector3 lastFilteredGyroL = Vector3.zero;
     private Vector3 lastFilteredGyroR = Vector3.zero;
+    
+    public Vector3 LastFilteredAccelL => lastFilteredAccelL;
+    public Vector3 LastFilteredAccelR => lastFilteredAccelR;
+
+    public Vector3 LastFilteredGyroL => lastFilteredGyroL;
+    public Vector3 LastFilteredGyroR => lastFilteredGyroR;
 
     // ================== 녹화 데이터 ==================
     private List<string> dataLog = new List<string>();

@@ -333,7 +333,6 @@ GameObject:
   - component: {fileID: 90621263}
   - component: {fileID: 90621261}
   - component: {fileID: 90621267}
-  - component: {fileID: 90621268}
   m_Layer: 0
   m_Name: Cube_R
   m_TagString: Untagged
@@ -353,10 +352,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9b5c154d920d754db92ed07a735dbc4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useLeft: 0
+  InputHandler: {fileID: 1148918719}
   stick: []
   gyro: {x: 0, y: 0, z: 0}
   accel: {x: 0, y: 0, z: 0}
+  jc_ind: 1
   orientation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!23 &90621262
 MeshRenderer:
@@ -463,27 +463,6 @@ MonoBehaviour:
   recalibrateKey: 99
   invert: 0
   baselineDeg: 0
---- !u!95 &90621268
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 90621260}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &105347931
 GameObject:
   m_ObjectHideFlags: 0
@@ -2091,6 +2070,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2360939234179528256, guid: 9ca674853e00f3640b99059b28157574,
         type: 3}
+      propertyPath: InputHandler
+      value: 
+      objectReference: {fileID: 1148918719}
+    - target: {fileID: 2360939234179528256, guid: 9ca674853e00f3640b99059b28157574,
+        type: 3}
       propertyPath: distanceText
       value: 
       objectReference: {fileID: 285386574}
@@ -2860,7 +2844,6 @@ GameObject:
   - component: {fileID: 1079016494}
   - component: {fileID: 1079016492}
   - component: {fileID: 1079016497}
-  - component: {fileID: 1079016499}
   m_Layer: 0
   m_Name: Cube_L
   m_TagString: Untagged
@@ -2880,10 +2863,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9b5c154d920d754db92ed07a735dbc4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useLeft: 1
+  InputHandler: {fileID: 1148918719}
   stick: []
   gyro: {x: 0, y: 0, z: 0}
   accel: {x: 0, y: 0, z: 0}
+  jc_ind: 0
   orientation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!23 &1079016493
 MeshRenderer:
@@ -2990,27 +2974,6 @@ MonoBehaviour:
   recalibrateKey: 99
   invert: 0
   baselineDeg: 0
---- !u!95 &1079016499
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1079016491}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1097649272
 GameObject:
   m_ObjectHideFlags: 0
@@ -3426,6 +3389,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1148918717}
+  - component: {fileID: 1148918719}
+  - component: {fileID: 1148918718}
   m_Layer: 0
   m_Name: JoyconDebugger
   m_TagString: Untagged
@@ -3450,6 +3415,60 @@ Transform:
   - {fileID: 90621265}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1148918718
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1148918716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 252eedb83608135489864ce647cedd4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  leftXLine: {fileID: 0}
+  leftYLine: {fileID: 0}
+  leftZLine: {fileID: 0}
+  rightXLine: {fileID: 0}
+  rightYLine: {fileID: 0}
+  rightZLine: {fileID: 0}
+  leftAccelDisplay: {x: 0, y: 0, z: 0}
+  leftGyroDisplay: {x: 0, y: 0, z: 0}
+  rightAccelDisplay: {x: 0, y: 0, z: 0}
+  rightGyroDisplay: {x: 0, y: 0, z: 0}
+  useButterworth: 1
+  useMovingAverage: 0
+  useEMA: 0
+  useLerp: 0
+  butterworthCutoff: 3
+  sampleRate: 100
+  butterworthOrder: 2
+  movingAverageWindow: 10
+  emaAlpha: 0.1
+  lerpFactor: 0.1
+--- !u!114 &1148918719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1148918716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fab80f651a8f4bb899f4be8167c790ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Visualizer: {fileID: 1148918718}
+  isJoyconBindingChecked: 0
+  stickLeft: []
+  stickRight: []
+  gyroLeft: {x: 0, y: 0, z: 0}
+  gyroRight: {x: 0, y: 0, z: 0}
+  accelLeft: {x: 0, y: 0, z: 0}
+  accelRight: {x: 0, y: 0, z: 0}
+  orientationLeft: {x: 0, y: 0, z: 0, w: 0}
+  orientationRight: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &1209547165
 GameObject:
   m_ObjectHideFlags: 0
@@ -8016,6 +8035,7 @@ MonoBehaviour:
   maxRotationAngle: 30
   rotationSpeed: 5
   rotationSmoothTime: 0.1
+  legEffortDeadband: 0.02
 --- !u!4 &6766536239644741123
 Transform:
   m_ObjectHideFlags: 0

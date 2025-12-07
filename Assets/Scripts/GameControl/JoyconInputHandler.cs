@@ -2,6 +2,8 @@ using UnityEngine;
 
 
 public class JoyconInputHandler : MonoBehaviour {
+    public JoyconAccelVisualizer Visualizer;
+    
     public (Joycon, Joycon) joyconsTuple;
     private JoyconManager joyconManager;
     
@@ -15,6 +17,7 @@ public class JoyconInputHandler : MonoBehaviour {
     public Vector3 accelRight;
     public Quaternion orientationLeft;
     public Quaternion orientationRight;
+
     
     private void Init() {
         this.isJoyconBindingChecked = false;
@@ -35,15 +38,15 @@ public class JoyconInputHandler : MonoBehaviour {
         if (!this.isJoyconBindingChecked) {
             BindingCheck();
         }
-
+        
         this.stickLeft = this.joyconsTuple.Item1.GetStick();
         this.stickRight = this.joyconsTuple.Item2.GetStick();
 
-        this.gyroLeft = this.joyconsTuple.Item1.GetGyro(); 
-        this.gyroRight = this.joyconsTuple.Item2.GetGyro();
+        this.gyroLeft = this.Visualizer.LastFilteredGyroL;  
+        this.gyroRight = this.Visualizer.LastFilteredGyroR;  
         
-        this.accelLeft = this.joyconsTuple.Item1.GetAccel();  
-        this.accelRight = this.joyconsTuple.Item2.GetAccel();  
+        this.accelLeft = this.Visualizer.LastFilteredAccelL;  
+        this.accelRight = this.Visualizer.LastFilteredAccelR;  
         
         this.orientationLeft = this.joyconsTuple.Item1.GetVector();
         this.orientationRight = this.joyconsTuple.Item2.GetVector();

@@ -2,16 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class JoyconDemo : MonoBehaviour {
-	
+public class JoyconCube : MonoBehaviour {
+	public JoyconInputHandler InputHandler;
 	private List<Joycon> joycons;
 
     // Values made available via Unity
     public float[] stick;
     public Vector3 gyro;
     public Vector3 accel;
-    public int jc_ind = 0;
+    public int jc_ind;
     public Quaternion orientation;
+    
 
     void Start ()
     {
@@ -67,12 +68,17 @@ public class JoyconDemo : MonoBehaviour {
             stick = j.GetStick();
 
             // Gyro values: x, y, z axis values (in radians per second)
-            gyro = j.GetGyro();
+            gyro = j.isLeft ? this.InputHandler.gyroLeft : this.InputHandler.accelRight;
+            
+            // gyro = j.GetGyro();
 
             // Accel values:  x, y, z axis values (in Gs)
-            accel = j.GetAccel();
+            accel = j.isLeft ? this.InputHandler.accelLeft : this.InputHandler.accelRight;
+            // accel = j.GetAccel();
 
-            orientation = j.GetVector();
+            orientation = j.isLeft ? this.InputHandler.orientationLeft : this.InputHandler.orientationRight;
+            // orientation.x *= 10f;
+            
 			if (j.GetButton(Joycon.Button.DPAD_UP)){
 				gameObject.GetComponent<Renderer>().material.color = Color.red;
 			} else{
