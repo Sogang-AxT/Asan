@@ -4,7 +4,7 @@ public class CharacterAnimationController : MonoBehaviour {
     private static readonly int Blend = Animator.StringToHash("Blend");
     private static readonly int IsLeft = Animator.StringToHash("isLeft");
 
-    [SerializeField] private PlayerMovementController playerMovementController;
+    [SerializeField] private PlayerMovementController_IMU playerMovementController;
     [SerializeField] private Animator animator;
 
 
