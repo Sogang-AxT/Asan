@@ -100,7 +100,10 @@ public class PlayerMovementController : MonoBehaviour {
     public float propulsionDeadBandDeg;         // Δ각이 이 값(도) 미만이면 전진 힘 0;          // 3f
     public float propulsionGain;                // 전진 힘 스케일(값↑ = 더 세게);             // 10f
     public float propulsionSmoothing;           // Δ각→전진 힘 저역통과(초);                 // 0.15f
-    public float yawTorqueFromDelta;            // 좌/우 Δ각 차이에 비례하는 약한 Yaw 토크;   // 0.25f
+    
+    // TODO: 회전반경 제어
+    public float yawTorqueFromDelta;            // 좌/우 Δ각 차이에 비례하는 약한 Yaw 토크;   // 0.25f 
+    
     public bool scaleYawByPropulsion;           // Yaw 토크를 추진량에 비례시킬지;          // true
     public float fullAngleDeg;                  // 20f
     private float _propulsion;                  // 추친력
