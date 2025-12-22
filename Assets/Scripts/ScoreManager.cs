@@ -11,46 +11,63 @@ public class ScoreManager : MonoBehaviour
     public GameObject player;
     float distance = 0;
 
-    private readonly List<float> _leftAngles = new();
-    private readonly List<float> _rightAngles = new();
+    private readonly List<float> _leftValues = new();
+    private readonly List<float> _rightValues = new();
 
     public EndTrainingUI endUI;
     public bool isFinish = false;
     private bool isEnd = false;
 
     public PlayerMovementController movement;
+    public PlayerAccelMovementController accelMovement;
 
     [SerializeField] private PlayTimer timer;
 
     void Start()
     {
-        movement = movement.GetComponent<PlayerMovementController>();
+        if (player != null)
+        {
+            movement = player.GetComponent<PlayerMovementController>();
+            accelMovement = player.GetComponent<PlayerAccelMovementController>();
+        }
     }
 
-    public void RecordStroke(bool leftside, float angle)
+    public void RecordStroke(bool leftside, float value)
     {
-        if (leftside) 
-        {
-            _leftAngles.Add(angle);
-        }
-        else
-        {
-            _rightAngles.Add(angle);
-        }
-        Debug.Log($"[Score] add {(leftside ? "L" : "R")} angle={angle:F1}°  |  Lcnt={_leftAngles.Count}, Rcnt={_rightAngles.Count}");
+        if (leftside) _leftValues.Add(value);
+        else _rightValues.Add(value);
+
+        // Debug.Log($"[Score] {(leftside ? "L" : "R")} Record: {value:F2}");
     }
 
     void Update()
     {
         if(isFinish == true && isEnd ==false)
         {
-            float distanceM = movement.distanceMeters;
-            int leftCnt = movement.LegStrokeCountLeft;
-            int rightCnt = movement.LegStrokeCountRight;
-            float avgL = (_leftAngles.Count > 0) ? _leftAngles.Average() : 0f;
-            float avgR = (_rightAngles.Count > 0) ? _rightAngles.Average() : 0f;
-            Debug.Log("avgL" + avgL + " / avgR" + avgR);
-            endUI.Show(timer.ElapsedTime, distanceM, avgL, avgR, leftCnt, rightCnt);
+            float distanceM = 0f;
+
+            if (accelMovement != null && accelMovement.enabled)
+            {
+                distanceM = accelMovement.distanceMeters;
+            }
+            // 우선순위 2: 기존 무브먼트 컨트롤러가 켜져 있는가?
+            else if (movement != null && movement.enabled)
+            {
+                distanceM = movement.distanceMeters;
+            }
+            isEnd = true;
+            int leftCnt = _leftValues.Count;
+            int rightCnt = _rightValues.Count;
+
+            float avgL = (leftCnt > 0) ? _leftValues.Average() : 0f;
+            float avgR = (rightCnt > 0) ? _rightValues.Average() : 0f;
+
+            Debug.Log($"[Result] Dist: {distanceM}m, AvgL: {avgL:F1}, AvgR: {avgR:F1}");
+
+            if (endUI != null)
+            {
+                endUI.Show(timer.ElapsedTime, distanceM, avgL, avgR, leftCnt, rightCnt);
+            }
 
             isEnd = true;
         }
