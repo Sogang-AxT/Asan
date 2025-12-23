@@ -5,7 +5,10 @@ public class CharacterAnimationController : MonoBehaviour {
     private static readonly int IsLeft = Animator.StringToHash("isLeft");
 
     [SerializeField] private PlayerMovementController playerMovementController;
+    [SerializeField] private PlayerAccelMovementController playerAccelMovementController;
     [SerializeField] private Animator animator;
+
+    public float animStrengthMultiplier = 2.5f;
 
 
     // private Vector3 _currentLeftPaddleVelocity;
@@ -19,8 +22,8 @@ public class CharacterAnimationController : MonoBehaviour {
 
     // private float _velocitySmoothing;
     // private float _animationBlending;
-    
-    
+
+
     private void Init() {
         // this._velocitySmoothing = 0.1f;
         // this._animationBlending = 0.5f;
@@ -41,8 +44,15 @@ public class CharacterAnimationController : MonoBehaviour {
         // _smoothRightPaddleVelocity = Vector3.Lerp(_smoothRightPaddleVelocity, frameRightVelocity, _velocitySmoothing);
         // _currentLeftPaddleVelocity = _smoothRightPaddleVelocity;
         // _previousRightPaddleVelocity = rightPaddle.position;
-        
-        this.animator.SetBool(IsLeft, this.playerMovementController.LeftDominant);
-        this.animator.SetFloat(Blend, this.playerMovementController.Propulsion);
+        if (playerMovementController != null && playerMovementController.enabled)
+        {
+            this.animator.SetBool(IsLeft, this.playerMovementController.LeftDominant);
+            this.animator.SetFloat(Blend, this.playerMovementController.Propulsion);
+        }
+        if (playerAccelMovementController != null && playerAccelMovementController.enabled)
+        {
+            this.animator.SetBool(IsLeft, this.playerAccelMovementController.LeftDominant);
+            this.animator.SetFloat(Blend, this.playerAccelMovementController.Propulsion);
+        }
     }
 }
