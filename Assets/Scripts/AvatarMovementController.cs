@@ -38,10 +38,6 @@ public class AvatarMovementController : MonoBehaviour {
             return;
         }
         
-        
-        // TODO: isLeft만으로는 노이즈가 심해서 빨리 움직이면 조건이 풀려버림
-        // 이 때문에 현재 damp를 쓰나 안쓰나 차이가 없음 (damp는 '바보같은' AI가 추천한 방식)
-
         var isLeft = this.playerMovementController.LeftDominant;
         
         if (isLeft) {   // thighL: 1.52f ~ -28.48f (0~30을 1.52 ~ -28.48로 매핑)

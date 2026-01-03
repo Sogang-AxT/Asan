@@ -1,12 +1,8 @@
 using UnityEngine;
-using UnityEngine.Serialization;
 using TMPro;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMovementController : MonoBehaviour {
-    [Header("Arc space (axes used for rotation)")]
-    // public Transform arcFrameTransform; // 비우면 Paddle 축 기준
-    
     [Header("Input (Joy-Con mapped cubes)")]
     public Transform joyconCubeLeft;
     public Transform joyconCubeRight;
@@ -32,14 +28,6 @@ public class PlayerMovementController : MonoBehaviour {
     private (float, float) _angleSumAbsTuple;   // 다리 각도 절대값 (좌, 우); _sumLeft/RightAngleAbs
     private (int, int) _movementCountTuple;     // 다리 움직임 카운팅 (좌, 우); _countLeft/Right
     
-    // public float LegMovementAvgAngleLeft 
-    //     => (_movementCountTuple.Item1 > 0) ? (_angleSumAbsTuple.Item1 / _movementCountTuple.Item1) : 0f;
-    // public float LegMovementAvgAngleRight 
-    //     => (_movementCountTuple.Item2 > 0) ? (_angleSumAbsTuple.Item2 / _movementCountTuple.Item2) : 0f;
-    public int LegStrokeCountLeft
-         => _movementCountTuple.Item1;
-    public int LegStrokeCountRight 
-         => _movementCountTuple.Item2;
     
     // 다리 움직임 피크 계산
     private sbyte _domTrend;            // +1 up, -1 down, 0 hold
@@ -48,22 +36,10 @@ public class PlayerMovementController : MonoBehaviour {
     private float _peakDomAngle;
     private float _phase, _phaseVel;
     private string _peakDomSide;        // "-"
-    
-    // Animation shared bases
-    // Vector3    _paddleBasePos;
-    // Quaternion _paddleBaseRot;
-    // Vector3    _chestBasePos;
-    // Quaternion _chestBaseRot;
-    // Vector3    _spineBasePos;
-    // Quaternion _spineBaseRot;
-    // Quaternion _neckBaseRot;
-    // // BodyRoot base
-    // Quaternion _bodyRootBaseRot;
-    // Vector3    _bodyRootBasePos;
+    public string PeakDomSide => _peakDomSide;
     
     
     // -- Physics -- //
-    
     [Header("Physics Assist")]
     public bool enablePhysicsAssist = true;
 
@@ -92,7 +68,6 @@ public class PlayerMovementController : MonoBehaviour {
     private Vector3 _centerOfMassOffset;
     
     [Header("Propel Target / Direction")]
-    // public Transform propelForwardRef;
     public Transform propelTargetTransform; // 전진 대상 (연속 힘 적용)
     public bool useWorldSpaceForward;       // false
     
@@ -110,15 +85,13 @@ public class PlayerMovementController : MonoBehaviour {
     public float Propulsion => _propulsion;
     
     [Header("Smoothing")]
-    // public float dominantLerp = 8f;
     public float phaseSmoothUp;             // 0.06f
     public float phaseSmoothDown;           // 0.18f
-    // public float returnLerp = 10f;
-    // public float paddleRotLerp = 10f;
-    // public float paddlePosLerp = 12f;
     public float deadzone;                  // 0.02f
     public int distanceMeters;              // 0
     public int paddleCount;                 // 0
+    
+    // TODO: 제거
     public TMP_Text distanceText;
     public TMP_Text paddleCountText;
 
@@ -127,6 +100,7 @@ public class PlayerMovementController : MonoBehaviour {
     private Rigidbody _rigidbody;
     private bool _leftDominant;
     public bool LeftDominant => _leftDominant;
+
     
     private void Init() {
         this._rigidbody = GetComponent<Rigidbody>();
@@ -187,7 +161,7 @@ public class PlayerMovementController : MonoBehaviour {
         PeakTrendCheck();
         
         // 위상값 계산
-        CalculatePhase();   // TODO: 애니메이션 처리 외에는 용도가?
+        CalculatePhase();
         
         // 추진량 계산
         CalculatePropulsion();
@@ -283,7 +257,8 @@ public class PlayerMovementController : MonoBehaviour {
         }
         
         // TODO: DEBUG
-        // Debug.Log($"[Stroke++] side={(leftSide ? "Left" : "Right")}, angleAbs={angleAbsDeg:0.0}°, +{addDist}m, count={this.paddleCount}");
+        // Debug.Log($"[Stroke++] side={(leftSide ? "Left" : "Right")},
+        // angleAbs={angleAbsDeg:0.0}°, +{addDist}m, count={this.paddleCount}");
         // RefreshStatsUI();
     }
 
