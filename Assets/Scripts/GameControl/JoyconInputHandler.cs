@@ -2,6 +2,8 @@ using UnityEngine;
 
 
 public class JoyconInputHandler : MonoBehaviour {
+    [SerializeField] private JoyconAccelVisualizer _joyconAccelVisualizer;
+    
     public (Joycon, Joycon) joyconsTuple;
     private JoyconManager joyconManager;
     
@@ -44,16 +46,28 @@ public class JoyconInputHandler : MonoBehaviour {
     }
 
     private void GetJoyconValue() {
-        // RAW
+        // Stick Input; RAW
         this.stickLeft = this.joyconsTuple.Item1.GetStick();
         this.stickRight = this.joyconsTuple.Item2.GetStick();
 
-        this.gyroLeft = this.joyconsTuple.Item1.GetGyro(); 
-        this.gyroRight = this.joyconsTuple.Item2.GetGyro();
         
-        this.accelLeft = this.joyconsTuple.Item1.GetAccel();  
-        this.accelRight = this.joyconsTuple.Item2.GetAccel();  
+        // Accel & Gyro Input; Filter
+        if (this._joyconAccelVisualizer != null) {
+            this.accelLeft = this._joyconAccelVisualizer.LastFilteredAccelL;
+            this.accelRight = this._joyconAccelVisualizer.LastFilteredAccelR;
+            
+            this.gyroLeft = this._joyconAccelVisualizer.LastFilteredGyroL;
+            this.gyroRight = this._joyconAccelVisualizer.LastFilteredGyroR;
+        }
+        else {
+            this.accelLeft = this.joyconsTuple.Item1.GetAccel();  
+            this.accelRight = this.joyconsTuple.Item2.GetAccel();  
+            
+            this.gyroLeft = this.joyconsTuple.Item1.GetGyro(); 
+            this.gyroRight = this.joyconsTuple.Item2.GetGyro();
+        }
         
+        // Orientation Input; RAW
         this.orientationLeft = this.joyconsTuple.Item1.GetVector();
         this.orientationRight = this.joyconsTuple.Item2.GetVector();
     }
