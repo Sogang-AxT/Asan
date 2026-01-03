@@ -353,6 +353,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9b5c154d920d754db92ed07a735dbc4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inputHandler: {fileID: 0}
   useLeft: 0
   stick: []
   gyro: {x: 0, y: 0, z: 0}
@@ -2891,6 +2892,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9b5c154d920d754db92ed07a735dbc4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inputHandler: {fileID: 1148918718}
   useLeft: 1
   stick: []
   gyro: {x: 0, y: 0, z: 0}
@@ -3437,6 +3439,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1148918717}
+  - component: {fileID: 1148918718}
   m_Layer: 0
   m_Name: JoyconDebugger
   m_TagString: Untagged
@@ -3461,6 +3464,27 @@ Transform:
   - {fileID: 90621265}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1148918718
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1148918716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fab80f651a8f4bb899f4be8167c790ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isJoyconBindingChecked: 0
+  stickLeft: []
+  stickRight: []
+  gyroLeft: {x: 0, y: 0, z: 0}
+  gyroRight: {x: 0, y: 0, z: 0}
+  accelLeft: {x: 0, y: 0, z: 0}
+  accelRight: {x: 0, y: 0, z: 0}
+  orientationLeft: {x: 0, y: 0, z: 0, w: 0}
+  orientationRight: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &1209547165
 GameObject:
   m_ObjectHideFlags: 0

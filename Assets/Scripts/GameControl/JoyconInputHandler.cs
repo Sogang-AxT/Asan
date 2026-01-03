@@ -32,10 +32,19 @@ public class JoyconInputHandler : MonoBehaviour {
     }
 
     private void Update() {
+        if (this.joyconsTuple.Item1 == null || this.joyconsTuple.Item2 == null) {
+            return;
+        }
+        
         if (!this.isJoyconBindingChecked) {
             BindingCheck();
         }
 
+        GetJoyconValue();
+    }
+
+    private void GetJoyconValue() {
+        // RAW
         this.stickLeft = this.joyconsTuple.Item1.GetStick();
         this.stickRight = this.joyconsTuple.Item2.GetStick();
 
@@ -47,6 +56,11 @@ public class JoyconInputHandler : MonoBehaviour {
         
         this.orientationLeft = this.joyconsTuple.Item1.GetVector();
         this.orientationRight = this.joyconsTuple.Item2.GetVector();
+    }
+    
+    // JoyconDemo가 어떤 조이콘을 참조해야 하는지 알려주는 메서드
+    public Joycon GetJoycon(bool left) {
+        return left ? joyconsTuple.Item1 : joyconsTuple.Item2;
     }
     
     private void BindingCheck() {
