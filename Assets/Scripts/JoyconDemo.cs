@@ -19,8 +19,6 @@ public class JoyconDemo : MonoBehaviour
             return;
         }
         
-        
-        
         var mgr = JoyconManager.Instance;
         if (mgr == null) return;
 

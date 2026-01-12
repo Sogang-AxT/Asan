@@ -37,7 +37,12 @@ public class PlayerMovementController : MonoBehaviour {
     private float _phase, _phaseVel;
     private string _peakDomSide;        // "-"
     public string PeakDomSide => _peakDomSide;
-    
+
+    // 아바타 애니메이션용
+    private (float, float) _phaseTuple;     // 위상 (L, R)
+    private (float, float) _phaseVelTuple;  // SmoothDamp (L, R)
+    public float LeftPhase => _phaseTuple.Item1;
+    public float RightPhase => _phaseTuple.Item2;
     
     // -- Physics -- //
     [Header("Physics Assist")]
@@ -80,7 +85,7 @@ public class PlayerMovementController : MonoBehaviour {
     public float fullAngleDeg;                  // 20f
     private float _propulsion;                  // 추친력
     public float Propulsion => _propulsion;
-    
+
     [Header("Smoothing")]
     public float phaseSmoothUp;             // 0.06f
     public float phaseSmoothDown;           // 0.18f
@@ -256,21 +261,32 @@ public class PlayerMovementController : MonoBehaviour {
 
     // 위상값 계산 (0 ~ 1)
     private void CalculatePhase() {
-        var target = Mathf.Clamp01(Mathf.Abs(this._domXPrev) / Mathf.Max(1f, this.fullAngleDeg));
-        var smoothTime = (this._domTrend == -1) ? this.phaseSmoothDown : this.phaseSmoothUp;
-        this._phase = 
-            Mathf.SmoothDamp(
-                this._phase, target, ref this._phaseVel, Mathf.Max(1e-3f, smoothTime));
-
-        var strength = this._phase;
+        var targetL = Mathf.Clamp01(Mathf.Abs(this._deltaAngleTuple.Item1) / Mathf.Max(1f, this.fullAngleDeg));
+        this._phaseTuple.Item1 = Mathf.SmoothDamp(
+            this._phaseTuple.Item1, targetL, ref this._phaseVelTuple.Item1, 
+            Mathf.Max(1e-3f, this.phaseSmoothUp));
         
-        if (strength < this.deadzone) {
-            strength = 0f;
-        }
         
-        var theta = strength * Mathf.PI;
-        var sinT  = Mathf.Sin(theta);
-        var cosT  = Mathf.Cos(theta);
+        var targetR = Mathf.Clamp01(Mathf.Abs(this._deltaAngleTuple.Item2) / Mathf.Max(1f, this.fullAngleDeg));
+        this._phaseTuple.Item2 = Mathf.SmoothDamp(
+            this._phaseTuple.Item2, targetR, ref this._phaseVelTuple.Item2, 
+            Mathf.Max(1e-3f, this.phaseSmoothUp));
+        
+        // var target = Mathf.Clamp01(Mathf.Abs(this._domXPrev) / Mathf.Max(1f, this.fullAngleDeg));
+        // var smoothTime = (this._domTrend == -1) ? this.phaseSmoothDown : this.phaseSmoothUp;
+        // this._phase = 
+        //     Mathf.SmoothDamp(
+        //         this._phase, target, ref this._phaseVel, Mathf.Max(1e-3f, smoothTime));
+        //
+        // var strength = this._phase;
+        //
+        // if (strength < this.deadzone) {
+        //     strength = 0f;
+        // }
+        //
+        // var theta = strength * Mathf.PI;
+        // var sinT  = Mathf.Sin(theta);
+        // var cosT  = Mathf.Cos(theta);
     }
 
     // 추진량 계산

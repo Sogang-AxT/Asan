@@ -37,32 +37,45 @@ public class AvatarMovementController : MonoBehaviour {
         if (!this.playerMovementController) {
             return;
         }
-        
-        var isLeft = this.playerMovementController.LeftDominant;
-        
-        if (isLeft) {   // thighL: 1.52f ~ -28.48f (0~30을 1.52 ~ -28.48로 매핑)
-            var targetZL = Mathf.Lerp(this._initThighL, (this._initThighL - this.maxRotationAngle),
-                    this.playerMovementController.Propulsion);
-            
-            this._currentZL 
-                = Mathf.SmoothDampAngle(this._currentZL, targetZL, ref this._velocityZL, this.rotationSmoothTime);
-            
-            var currentRotationL = this.thighL.localEulerAngles;
-            // var newZL = Mathf.LerpAngle(currentRotationL.z, targetZL, Time.deltaTime * this.rotationSpeed);
-            
-            this.thighL.localEulerAngles = new Vector3(currentRotationL.x, currentRotationL.y, this._currentZL);
-        }
-        else {  // thighR: -179.856f ~ -209.856f (0~30을 -179.856 ~ -209.856로 매핑)
-            var targetZR = Mathf.Lerp(this._initThighR, (this._initThighR - this.maxRotationAngle), 
-                    this.playerMovementController.Propulsion);
-            
-            this._currentZR
-                = Mathf.SmoothDampAngle(this._currentZR, targetZR, ref this._velocityZR, this.rotationSmoothTime);
-            
-            var currentRotationR = this.thighR.localEulerAngles;
-            // var newZR = Mathf.LerpAngle(currentRotationR.z, targetZR, Time.deltaTime * this.rotationSpeed);
 
-            this.thighR.localEulerAngles = new Vector3(currentRotationR.x, currentRotationR.y, this._currentZR);
-        }
+        // 왼쪽 다리 아바타 애니메이션
+        var targetZL = Mathf.Lerp(this._initThighL, this._initThighL - this.maxRotationAngle,
+            this.playerMovementController.LeftPhase);
+        var currentRotationL = this.thighL.localEulerAngles;
+        this.thighL.localEulerAngles = new Vector3(currentRotationL.x, currentRotationL.y, targetZL);
+        
+        // 오른쪽 다리 아바타 애니메이션
+        var targetZR = Mathf.Lerp(this._initThighR, this._initThighR - this.maxRotationAngle,
+            this.playerMovementController.RightPhase);
+        var currentRotationR = this.thighR.localEulerAngles;
+        this.thighR.localEulerAngles = new Vector3(currentRotationR.x, currentRotationR.y, targetZR);
+
+        
+        // var isLeft = this.playerMovementController.LeftDominant;
+        //
+        // if (isLeft) {   // thighL: 1.52f ~ -28.48f (0 ~ 30을 1.52 ~ -28.48로 매핑)
+        //     var targetZL = Mathf.Lerp(this._initThighL, (this._initThighL - this.maxRotationAngle),
+        //             this.playerMovementController.Propulsion);
+        //     
+        //     this._currentZL 
+        //         = Mathf.SmoothDampAngle(this._currentZL, targetZL, ref this._velocityZL, this.rotationSmoothTime);
+        //     
+        //     var currentRotationL = this.thighL.localEulerAngles;
+        //     // var newZL = Mathf.LerpAngle(currentRotationL.z, targetZL, Time.deltaTime * this.rotationSpeed);
+        //     
+        //     this.thighL.localEulerAngles = new Vector3(currentRotationL.x, currentRotationL.y, this._currentZL);
+        // }
+        // else {  // thighR: -179.856f ~ -209.856f (0 ~ 30을 -179.856 ~ -209.856로 매핑)
+        //     var targetZR = Mathf.Lerp(this._initThighR, (this._initThighR - this.maxRotationAngle), 
+        //             this.playerMovementController.Propulsion);
+        //     
+        //     this._currentZR
+        //         = Mathf.SmoothDampAngle(this._currentZR, targetZR, ref this._velocityZR, this.rotationSmoothTime);
+        //     
+        //     var currentRotationR = this.thighR.localEulerAngles;
+        //     // var newZR = Mathf.LerpAngle(currentRotationR.z, targetZR, Time.deltaTime * this.rotationSpeed);
+        //
+        //     this.thighR.localEulerAngles = new Vector3(currentRotationR.x, currentRotationR.y, this._currentZR);
+        // }
     }
 }
