@@ -4,8 +4,10 @@ public class CharacterAnimationController : MonoBehaviour {
     private static readonly int Blend = Animator.StringToHash("Blend");
     private static readonly int IsLeft = Animator.StringToHash("isLeft");
 
-    [SerializeField] private PlayerMovementController playerMovementController;
-    [SerializeField] private PlayerAccelMovementController playerAccelMovementController;
+    //[SerializeField] private PlayerMovementController playerMovementController;
+    [SerializeField] private PlayerBoatController playerBoatController;
+    [SerializeField] private PlayerAccelBoatController playerAccelBoatController;
+
     [SerializeField] private Animator animator;
 
     public float animStrengthMultiplier = 2.5f;
@@ -25,7 +27,7 @@ public class CharacterAnimationController : MonoBehaviour {
             this.animator.SetBool(IsLeft, this.playerMovementController.PeakDomSide == "Left");
             this.animator.SetFloat(Blend, this.playerMovementController.Propulsion);
         }
-        if (playerAccelMovementController != null && playerAccelMovementController.enabled)
+        else if (playerAccelBoatController != null && playerAccelBoatController.enabled)
         {
             this.animator.SetBool(IsLeft, this.playerMovementController.PeakDomSide == "Left");
             this.animator.SetFloat(Blend, this.playerAccelMovementController.Propulsion);

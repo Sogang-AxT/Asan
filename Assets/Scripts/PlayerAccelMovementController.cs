@@ -384,7 +384,7 @@ public class PlayerAccelMovementController : MonoBehaviour
 }
 
 // 필터 클래스 (동일)
-public class AccelButterworthFilter
+public class AccelButterworthFilterX
 {
     private class Biquad
     {
@@ -408,7 +408,7 @@ public class AccelButterworthFilter
         }
     }
     private List<Biquad> sections = new List<Biquad>();
-    public AccelButterworthFilter(float cutoffFreq, float sampleRate, int order = 2)
+    public AccelButterworthFilterX(float cutoffFreq, float sampleRate, int order = 2)
     {
         order = Mathf.Max(2, order);
         int numSections = Mathf.CeilToInt(order / 2.0f);
