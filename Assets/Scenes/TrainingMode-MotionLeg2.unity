@@ -497,6 +497,7 @@ MonoBehaviour:
   endUI: {fileID: 735284398}
   isFinish: 0
   movement: {fileID: 7302416160396845217}
+  accelMovement: {fileID: 0}
   timer: {fileID: 1483815743}
 --- !u!4 &127649214
 Transform:
@@ -4106,7 +4107,7 @@ MonoBehaviour:
   fadeInSeconds: 1.5
   sfxSource: {fileID: 1869642900}
   startButtonSFX: {fileID: 8300000, guid: fdf6093311cc4874f9879e15bc10004a, type: 3}
-  player: {fileID: 7302416160396845217}
+  player: {fileID: 7302416160396845223}
 --- !u!4 &1186171322
 Transform:
   m_ObjectHideFlags: 0
@@ -8199,6 +8200,16 @@ PrefabInstance:
       propertyPath: paddleCountText
       value: 
       objectReference: {fileID: 1668776721}
+    - target: {fileID: 4040134786889608465, guid: 9ca674853e00f3640b99059b28157574,
+        type: 3}
+      propertyPath: joyconInputReader
+      value: 
+      objectReference: {fileID: 7302416160396845223}
+    - target: {fileID: 4040134786889608465, guid: 9ca674853e00f3640b99059b28157574,
+        type: 3}
+      propertyPath: playerBoatController
+      value: 
+      objectReference: {fileID: 7302416160396845221}
     - target: {fileID: 6490675215654173434, guid: 9ca674853e00f3640b99059b28157574,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -8258,6 +8269,18 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 790684154059356133, guid: 9ca674853e00f3640b99059b28157574,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7302416160396845223}
+    - targetCorrespondingSourceObject: {fileID: 790684154059356133, guid: 9ca674853e00f3640b99059b28157574,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7302416160396845222}
+    - targetCorrespondingSourceObject: {fileID: 790684154059356133, guid: 9ca674853e00f3640b99059b28157574,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7302416160396845221}
     - targetCorrespondingSourceObject: {fileID: 7997703167566775034, guid: 9ca674853e00f3640b99059b28157574,
         type: 3}
       insertIndex: -1
@@ -8310,6 +8333,82 @@ CapsuleCollider:
   m_Height: 1.2408168
   m_Direction: 1
   m_Center: {x: 0, y: 1.1104084, z: -0.53}
+--- !u!114 &7302416160396845221
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7302416160396845218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7f890fdd5cbc6a43bc20bc0c905ad3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  propulsionDeadBandDeg: 3
+  propulsionGain: 10
+  propulsionSmoothing: 0.15
+  fullAngleDeg: 20
+  yawTorqueFromDelta: 0.25
+  scaleYawByPropulsion: 1
+  minCountAngle: 10
+  resetCountAngle: 5
+  distanceText: {fileID: 783310802}
+  paddleCountText: {fileID: 1668776721}
+  scoreManager: {fileID: 127649213}
+--- !u!114 &7302416160396845222
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7302416160396845218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a5ae8984f7d0c44fa3561a7a37c55a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  propelTargetTransform: {fileID: 2134091554}
+  useWorldSpaceForward: 0
+  constantWaterLevel: 0
+  buoyancyPoints: []
+  buoyancyStrength: 9.81
+  buoyancyScale: 1
+  enablePhysicsAssist: 1
+  baseDrag: 1.5
+  dragSpeedFactor: 0.05
+  baseAngularDrag: 3
+  angularDragFactor: 0.025
+  lateralDampingMultiply: 0.8
+  maxVelocity: 6
+  maxAngularVelocity: 5
+  uprightStartAngleDeg: 5
+  uprightStability: 12
+  uprightAngularDamping: 0.1
+  applyCenterOfMass: 1
+--- !u!114 &7302416160396845223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7302416160396845218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e237f18e067073e47a6e88ea89e318f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  joyconCubeLeft: {fileID: 1079016496}
+  joyconCubeRight: {fileID: 90621265}
+  isInvertedLeft: 0
+  isInvertedRight: 0
+  useAngleAutoCalibrator: 1
+  manualCalibrateKeyCode: 99
+  deadZoneDegree: 2
+  fullAngleDeg: 20
+  phaseSmoothUp: 0.06
+  phaseSmoothDown: 0.18
+  deadzone: 0.02
 --- !u!1001 &8237608876732249863
 PrefabInstance:
   m_ObjectHideFlags: 0
