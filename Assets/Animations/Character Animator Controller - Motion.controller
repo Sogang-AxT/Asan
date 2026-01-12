@@ -33,20 +33,20 @@ AnimatorStateMachine:
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: -2790682046437847552}
-    m_Position: {x: -40, y: 110, z: 0}
+    m_Position: {x: -100, y: 110, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 2703421000610291784}
-    m_Position: {x: -410, y: 110, z: 0}
+    m_Position: {x: -390, y: 110, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 2130530081306636950}
-    m_Position: {x: -240, y: -10, z: 0}
+    m_Position: {x: -250, y: 0, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []
   m_StateMachineTransitions: {}
   m_StateMachineBehaviours: []
   m_AnyStatePosition: {x: -150, y: -320, z: 0}
-  m_EntryPosition: {x: -50, y: -160, z: 0}
+  m_EntryPosition: {x: -230, y: -80, z: 0}
   m_ExitPosition: {x: -310, y: 530, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
   m_DefaultState: {fileID: 2130530081306636950}
@@ -189,7 +189,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Blend Tree Left
+  m_Name: Blend Tree Right
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -239,7 +239,7 @@ AnimatorStateTransition:
   m_PrefabAsset: {fileID: 0}
   m_Name: 
   m_Conditions:
-  - m_ConditionMode: 2
+  - m_ConditionMode: 1
     m_ConditionEvent: isLeft
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
@@ -381,7 +381,7 @@ AnimatorStateTransition:
   m_PrefabAsset: {fileID: 0}
   m_Name: 
   m_Conditions:
-  - m_ConditionMode: 1
+  - m_ConditionMode: 2
     m_ConditionEvent: isLeft
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
@@ -405,7 +405,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Blend Tree Right
+  m_Name: Blend Tree Left
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:

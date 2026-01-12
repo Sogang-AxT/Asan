@@ -12,6 +12,7 @@ public class CharacterAnimationController : MonoBehaviour {
 
     public float animStrengthMultiplier = 2.5f;
 
+
     private void Init() {
         this.animator.SetFloat(Blend, 0.5f);
     }
@@ -20,19 +21,16 @@ public class CharacterAnimationController : MonoBehaviour {
         Init();
     }
 
-    private void Update()
-    {
-        if (!animator) return;
-
-        if (playerBoatController != null && playerBoatController.enabled)
+    private void Update() {
+        if (playerMovementController != null && playerMovementController.enabled)
         {
-            this.animator.SetBool(IsLeft, playerBoatController.LeftDominant);
-            this.animator.SetFloat(Blend, playerBoatController.Propulsion);
+            this.animator.SetBool(IsLeft, this.playerMovementController.PeakDomSide == "Left");
+            this.animator.SetFloat(Blend, this.playerMovementController.Propulsion);
         }
         else if (playerAccelBoatController != null && playerAccelBoatController.enabled)
         {
-            this.animator.SetBool(IsLeft, playerAccelBoatController.LeftDominant);
-            this.animator.SetFloat(Blend, playerAccelBoatController.Propulsion);
+            this.animator.SetBool(IsLeft, this.playerMovementController.PeakDomSide == "Left");
+            this.animator.SetFloat(Blend, this.playerAccelMovementController.Propulsion);
         }
     }
 }

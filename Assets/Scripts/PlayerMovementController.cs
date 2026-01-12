@@ -1,12 +1,8 @@
 using UnityEngine;
-using UnityEngine.Serialization;
 using TMPro;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMovementController : MonoBehaviour {
-    [Header("Arc space (axes used for rotation)")]
-    // public Transform arcFrameTransform; // 비우면 Paddle 축 기준
-    
     [Header("Input (Joy-Con mapped cubes)")]
     public Transform joyconCubeLeft;
     public Transform joyconCubeRight;
@@ -32,14 +28,6 @@ public class PlayerMovementController : MonoBehaviour {
     private (float, float) _angleSumAbsTuple;   // 다리 각도 절대값 (좌, 우); _sumLeft/RightAngleAbs
     private (int, int) _movementCountTuple;     // 다리 움직임 카운팅 (좌, 우); _countLeft/Right
     
-    // public float LegMovementAvgAngleLeft 
-    //     => (_movementCountTuple.Item1 > 0) ? (_angleSumAbsTuple.Item1 / _movementCountTuple.Item1) : 0f;
-    // public float LegMovementAvgAngleRight 
-    //     => (_movementCountTuple.Item2 > 0) ? (_angleSumAbsTuple.Item2 / _movementCountTuple.Item2) : 0f;
-    public int LegStrokeCountLeft
-         => _movementCountTuple.Item1;
-    public int LegStrokeCountRight 
-         => _movementCountTuple.Item2;
     
     // 다리 움직임 피크 계산
     private sbyte _domTrend;            // +1 up, -1 down, 0 hold
@@ -48,22 +36,15 @@ public class PlayerMovementController : MonoBehaviour {
     private float _peakDomAngle;
     private float _phase, _phaseVel;
     private string _peakDomSide;        // "-"
-    
-    // Animation shared bases
-    // Vector3    _paddleBasePos;
-    // Quaternion _paddleBaseRot;
-    // Vector3    _chestBasePos;
-    // Quaternion _chestBaseRot;
-    // Vector3    _spineBasePos;
-    // Quaternion _spineBaseRot;
-    // Quaternion _neckBaseRot;
-    // // BodyRoot base
-    // Quaternion _bodyRootBaseRot;
-    // Vector3    _bodyRootBasePos;
-    
+    public string PeakDomSide => _peakDomSide;
+
+    // 아바타 애니메이션용
+    private (float, float) _phaseTuple;     // 위상 (L, R)
+    private (float, float) _phaseVelTuple;  // SmoothDamp (L, R)
+    public float LeftPhase => _phaseTuple.Item1;
+    public float RightPhase => _phaseTuple.Item2;
     
     // -- Physics -- //
-    
     [Header("Physics Assist")]
     public bool enablePhysicsAssist = true;
 
@@ -92,7 +73,6 @@ public class PlayerMovementController : MonoBehaviour {
     private Vector3 _centerOfMassOffset;
     
     [Header("Propel Target / Direction")]
-    // public Transform propelForwardRef;
     public Transform propelTargetTransform; // 전진 대상 (연속 힘 적용)
     public bool useWorldSpaceForward;       // false
     
@@ -100,25 +80,20 @@ public class PlayerMovementController : MonoBehaviour {
     public float propulsionDeadBandDeg;         // Δ각이 이 값(도) 미만이면 전진 힘 0;          // 3f
     public float propulsionGain;                // 전진 힘 스케일(값↑ = 더 세게);             // 10f
     public float propulsionSmoothing;           // Δ각→전진 힘 저역통과(초);                 // 0.15f
-    
-    // TODO: 회전반경 제어
     public float yawTorqueFromDelta;            // 좌/우 Δ각 차이에 비례하는 약한 Yaw 토크;   // 0.25f 
-    
     public bool scaleYawByPropulsion;           // Yaw 토크를 추진량에 비례시킬지;          // true
     public float fullAngleDeg;                  // 20f
     private float _propulsion;                  // 추친력
     public float Propulsion => _propulsion;
-    
+
     [Header("Smoothing")]
-    // public float dominantLerp = 8f;
     public float phaseSmoothUp;             // 0.06f
     public float phaseSmoothDown;           // 0.18f
-    // public float returnLerp = 10f;
-    // public float paddleRotLerp = 10f;
-    // public float paddlePosLerp = 12f;
     public float deadzone;                  // 0.02f
     public int distanceMeters;              // 0
     public int paddleCount;                 // 0
+    
+    // TODO: 제거
     public TMP_Text distanceText;
     public TMP_Text paddleCountText;
 
@@ -127,6 +102,7 @@ public class PlayerMovementController : MonoBehaviour {
     private Rigidbody _rigidbody;
     private bool _leftDominant;
     public bool LeftDominant => _leftDominant;
+
     
     private void Init() {
         this._rigidbody = GetComponent<Rigidbody>();
@@ -187,7 +163,7 @@ public class PlayerMovementController : MonoBehaviour {
         PeakTrendCheck();
         
         // 위상값 계산
-        CalculatePhase();   // TODO: 애니메이션 처리 외에는 용도가?
+        CalculatePhase();
         
         // 추진량 계산
         CalculatePropulsion();
@@ -281,29 +257,36 @@ public class PlayerMovementController : MonoBehaviour {
             this._angleSumAbsTuple.Item2 += angleAbsDeg; 
             this._movementCountTuple.Item2++;
         }
-        
-        // TODO: DEBUG
-        // Debug.Log($"[Stroke++] side={(leftSide ? "Left" : "Right")}, angleAbs={angleAbsDeg:0.0}°, +{addDist}m, count={this.paddleCount}");
-        // RefreshStatsUI();
     }
 
     // 위상값 계산 (0 ~ 1)
     private void CalculatePhase() {
-        var target = Mathf.Clamp01(Mathf.Abs(this._domXPrev) / Mathf.Max(1f, this.fullAngleDeg));
-        var smoothTime = (this._domTrend == -1) ? this.phaseSmoothDown : this.phaseSmoothUp;
-        this._phase = 
-            Mathf.SmoothDamp(
-                this._phase, target, ref this._phaseVel, Mathf.Max(1e-3f, smoothTime));
-
-        var strength = this._phase;
+        var targetL = Mathf.Clamp01(Mathf.Abs(this._deltaAngleTuple.Item1) / Mathf.Max(1f, this.fullAngleDeg));
+        this._phaseTuple.Item1 = Mathf.SmoothDamp(
+            this._phaseTuple.Item1, targetL, ref this._phaseVelTuple.Item1, 
+            Mathf.Max(1e-3f, this.phaseSmoothUp));
         
-        if (strength < this.deadzone) {
-            strength = 0f;
-        }
         
-        var theta = strength * Mathf.PI;
-        var sinT  = Mathf.Sin(theta);
-        var cosT  = Mathf.Cos(theta);
+        var targetR = Mathf.Clamp01(Mathf.Abs(this._deltaAngleTuple.Item2) / Mathf.Max(1f, this.fullAngleDeg));
+        this._phaseTuple.Item2 = Mathf.SmoothDamp(
+            this._phaseTuple.Item2, targetR, ref this._phaseVelTuple.Item2, 
+            Mathf.Max(1e-3f, this.phaseSmoothUp));
+        
+        // var target = Mathf.Clamp01(Mathf.Abs(this._domXPrev) / Mathf.Max(1f, this.fullAngleDeg));
+        // var smoothTime = (this._domTrend == -1) ? this.phaseSmoothDown : this.phaseSmoothUp;
+        // this._phase = 
+        //     Mathf.SmoothDamp(
+        //         this._phase, target, ref this._phaseVel, Mathf.Max(1e-3f, smoothTime));
+        //
+        // var strength = this._phase;
+        //
+        // if (strength < this.deadzone) {
+        //     strength = 0f;
+        // }
+        //
+        // var theta = strength * Mathf.PI;
+        // var sinT  = Mathf.Sin(theta);
+        // var cosT  = Mathf.Cos(theta);
     }
 
     // 추진량 계산
