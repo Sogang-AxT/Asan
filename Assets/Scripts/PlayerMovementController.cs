@@ -103,6 +103,11 @@ public class PlayerMovementController : MonoBehaviour {
     private bool _leftDominant;
     public bool LeftDominant => _leftDominant;
 
+        
+    private static readonly int Blend = Animator.StringToHash("Blend");
+    private static readonly int IsLeft = Animator.StringToHash("isLeft");
+    [SerializeField] private Animator animator;
+    
     
     private void Init() {
         this._rigidbody = GetComponent<Rigidbody>();
@@ -116,6 +121,7 @@ public class PlayerMovementController : MonoBehaviour {
 
         this._centerOfMassOffset = new Vector3(0f, -0.1f, 0f);
 
+        this.animator.SetFloat(Blend, 0.5f);
         
         if (this.useAngleAutoCalibrator && !this._isAngleCalibrated) {
             JoyconCalibrator();
@@ -167,6 +173,10 @@ public class PlayerMovementController : MonoBehaviour {
         
         // 추진량 계산
         CalculatePropulsion();
+        
+        
+        this.animator.SetBool(IsLeft, this.LeftDominant);
+        this.animator.SetFloat(Blend, this.Propulsion);
     }
     
     private void JoyconGyroInput() {

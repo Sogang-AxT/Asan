@@ -322,6 +322,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9b5c154d920d754db92ed07a735dbc4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inputHandler: {fileID: 0}
   useLeft: 0
   stick: []
   gyro: {x: 0, y: 0, z: 0}
@@ -1625,6 +1626,12 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.30696458, y: -0.07000545, z: 0.0001245439}
     m_Extent: {x: 0.18225129, y: 0.157433, z: 0.110385984}
   m_DirtyAABB: 0
+--- !u!95 &569645855 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 8268138879980232139, guid: 9ca674853e00f3640b99059b28157574,
+    type: 3}
+  m_PrefabInstance: {fileID: 7302416160396845216}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &577166275
 GameObject:
   m_ObjectHideFlags: 0
@@ -3894,6 +3901,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9b5c154d920d754db92ed07a735dbc4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inputHandler: {fileID: 0}
   useLeft: 1
   stick: []
   gyro: {x: 0, y: 0, z: 0}
@@ -8461,6 +8469,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2360939234179528256, guid: 9ca674853e00f3640b99059b28157574,
         type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 569645855}
+    - target: {fileID: 2360939234179528256, guid: 9ca674853e00f3640b99059b28157574,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2360939234179528256, guid: 9ca674853e00f3640b99059b28157574,
+        type: 3}
       propertyPath: distanceText
       value: 
       objectReference: {fileID: 783310802}
@@ -8577,7 +8595,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 7302416160396845216}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7302416160396845218}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b1c57b24f3689264f85150a836939f63, type: 3}
   m_Name: 

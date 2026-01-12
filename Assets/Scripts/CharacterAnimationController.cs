@@ -22,15 +22,15 @@ public class CharacterAnimationController : MonoBehaviour {
     }
 
     private void Update() {
-        if (playerMovementController != null && playerMovementController.enabled)
-        {
-            this.animator.SetBool(IsLeft, this.playerMovementController.PeakDomSide == "Left");
-            this.animator.SetFloat(Blend, this.playerMovementController.Propulsion);
-        }
-        else if (playerAccelBoatController != null && playerAccelBoatController.enabled)
-        {
-            this.animator.SetBool(IsLeft, this.playerMovementController.PeakDomSide == "Left");
-            this.animator.SetFloat(Blend, this.playerAccelMovementController.Propulsion);
-        }
+        // if (playerMovementController != null && playerMovementController.enabled)
+        // {
+        //     this.animator.SetBool(IsLeft, this.playerMovementController.PeakDomSide == "Left");
+        //     this.animator.SetFloat(Blend, this.playerMovementController.Propulsion);
+        // }
+        // else if (playerAccelBoatController != null && playerAccelBoatController.enabled)
+        // {
+        //     this.animator.SetBool(IsLeft, this.playerMovementController.PeakDomSide == "Left");
+        //     this.animator.SetFloat(Blend, this.playerAccelMovementController.Propulsion);
+        // }
     }
 }
