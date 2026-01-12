@@ -2,6 +2,8 @@
 
 public class JoyconDemo : MonoBehaviour
 {
+    [SerializeField] private JoyconInputHandler inputHandler; // 핸들러 참조
+    
     private Joycon j;                 // 실제로 사용할 단일 Joy-Con
     public bool useLeft = true;       // 이 오브젝트가 왼쪽인지/오른쪽인지 지정
 
@@ -13,24 +15,29 @@ public class JoyconDemo : MonoBehaviour
 
     void TryBindJoycon()
     {
+        if (inputHandler == null) {
+            return;
+        }
+        
         var mgr = JoyconManager.Instance;
         if (mgr == null) return;
 
         // 1순위: 매니저의 고정 슬롯에서 바로 가져오기
-        j = useLeft ? mgr.leftJoycon : mgr.rightJoycon;
-
+        // j = useLeft ? mgr.leftJoycon : mgr.rightJoycon;
+        j = inputHandler.GetJoycon(useLeft);
+        
         // 2순위: 혹시 슬롯이 비었으면 리스트에서 스캔
-        if (j == null && mgr.j != null)
-        {
-            foreach (var cand in mgr.j)
-            {
-                if (cand != null && cand.isLeft == useLeft)
-                {
-                    j = cand;
-                    break;
-                }
-            }
-        }
+        // if (j == null && mgr.j != null)
+        // {
+        //     foreach (var cand in mgr.j)
+        //     {
+        //         if (cand != null && cand.isLeft == useLeft)
+        //         {
+        //             j = cand;
+        //             break;
+        //         }
+        //     }
+        // }
 
         if (j != null)
         {
@@ -42,6 +49,11 @@ public class JoyconDemo : MonoBehaviour
     {
         gyro = Vector3.zero;
         accel = Vector3.zero;
+
+        if (inputHandler == null) {
+            inputHandler = FindObjectOfType<JoyconInputHandler>();
+        }
+        
         TryBindJoycon();
 
         if (j == null)
@@ -79,10 +91,10 @@ public class JoyconDemo : MonoBehaviour
         }
 
         // 센서/포즈
-        stick = j.GetStick();
-        gyro = j.GetGyro();
-        accel = j.GetAccel();
-        orientation = j.GetVector();
+        stick = useLeft ? inputHandler.stickLeft : inputHandler.stickRight;
+        gyro = useLeft ? inputHandler.gyroLeft : inputHandler.gyroRight;
+        accel = useLeft ? inputHandler.accelLeft : inputHandler.accelRight;
+        orientation = useLeft ? inputHandler.orientationLeft : inputHandler.orientationRight;
 
         // 간단한 피드백
         if (j.GetButton(Joycon.Button.DPAD_UP))

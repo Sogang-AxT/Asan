@@ -5,13 +5,16 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Scenes/SampleScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
-  - enabled: 0
-    path: Assets/Scenes/TrainingMode.unity
-    guid: 4e475208793eb094ba7a0444113d5da8
+  - enabled: 1
+    path: Assets/Scenes/Lobby.unity
+    guid: 6661afd8cb5e989429fd3f055d14b9b3
   - enabled: 1
     path: Assets/Scenes/TrainingMode-Motion.unity
     guid: 8142ae89f2091474997789b1da346cb3
+  - enabled: 1
+    path: Assets/Scenes/TrainingMode-Motion_Sholder.unity
+    guid: a7d8d2f2c6f02634b8f5e7a304694a8b
+  - enabled: 1
+    path: Assets/Scenes/TrainingMode-MotionLeg2.unity
+    guid: c33b164160b635648a71f012127ab897
   m_configObjects: {}
