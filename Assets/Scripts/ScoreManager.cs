@@ -18,8 +18,8 @@ public class ScoreManager : MonoBehaviour
     public bool isFinish = false;
     private bool isEnd = false;
 
-    public PlayerMovementController movement;
-    public PlayerAccelMovementController accelMovement;
+    public PlayerBoatController movement;
+    public PlayerAccelBoatController accelMovement;
 
     [SerializeField] private PlayTimer timer;
 
@@ -27,8 +27,8 @@ public class ScoreManager : MonoBehaviour
     {
         if (player != null)
         {
-            movement = player.GetComponent<PlayerMovementController>();
-            accelMovement = player.GetComponent<PlayerAccelMovementController>();
+            movement = player.GetComponent<PlayerBoatController>();
+            accelMovement = player.GetComponent<PlayerAccelBoatController>();
         }
     }
 
@@ -48,12 +48,12 @@ public class ScoreManager : MonoBehaviour
 
             if (accelMovement != null && accelMovement.enabled)
             {
-                distanceM = accelMovement.distanceMeters;
+                distanceM = accelMovement._distanceMeters;
             }
             // 우선순위 2: 기존 무브먼트 컨트롤러가 켜져 있는가?
             else if (movement != null && movement.enabled)
             {
-                distanceM = movement.distanceMeters;
+                distanceM = movement._distanceMeters;
             }
             isEnd = true;
             int leftCnt = _leftValues.Count;

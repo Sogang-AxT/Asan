@@ -4,7 +4,6 @@ public class CharacterAnimationController : MonoBehaviour {
     private static readonly int Blend = Animator.StringToHash("Blend");
     private static readonly int IsLeft = Animator.StringToHash("isLeft");
 
-    //[SerializeField] private PlayerMovementController playerMovementController;
     [SerializeField] private PlayerBoatController playerBoatController;
     [SerializeField] private PlayerAccelBoatController playerAccelBoatController;
 
@@ -22,15 +21,15 @@ public class CharacterAnimationController : MonoBehaviour {
     }
 
     private void Update() {
-        // if (playerMovementController != null && playerMovementController.enabled)
-        // {
-        //     this.animator.SetBool(IsLeft, this.playerMovementController.PeakDomSide == "Left");
-        //     this.animator.SetFloat(Blend, this.playerMovementController.Propulsion);
-        // }
-        // else if (playerAccelBoatController != null && playerAccelBoatController.enabled)
-        // {
-        //     this.animator.SetBool(IsLeft, this.playerMovementController.PeakDomSide == "Left");
-        //     this.animator.SetFloat(Blend, this.playerAccelMovementController.Propulsion);
-        // }
+        if (playerBoatController != null && playerBoatController.enabled)
+        {
+            this.animator.SetBool(IsLeft, playerBoatController.LeftDominant);
+            this.animator.SetFloat(Blend, playerBoatController.Propulsion);
+        }
+        else if (playerAccelBoatController != null && playerAccelBoatController.enabled)
+        {
+            this.animator.SetBool(IsLeft, playerAccelBoatController.LeftDominant);
+            this.animator.SetFloat(Blend, playerAccelBoatController.Propulsion);
+        }
     }
 }

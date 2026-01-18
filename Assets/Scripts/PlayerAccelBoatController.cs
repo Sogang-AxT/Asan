@@ -44,8 +44,8 @@ public class PlayerAccelBoatController : MonoBehaviour
     private bool _gateLockL, _gateLockR;
 
     // 통계 변수
-    private int _distanceMeters = 0;
-    private int _paddleCount = 0;
+    public int _distanceMeters = 0;
+    public int _paddleCount = 0;
 
     // --- 외부 공개 프로퍼티 (애니메이션 연동용) ---
     public float Propulsion => _propulsion;
@@ -152,7 +152,7 @@ public class PlayerAccelBoatController : MonoBehaviour
         }
     }
 
-    private void ProcessStroke(bool leftSide, float val)
+    public void ProcessStroke(bool leftSide, float val)
     {
         int addDist = Mathf.RoundToInt(val * 10f);
         if (addDist < 1) addDist = 1;

@@ -497,7 +497,7 @@ MonoBehaviour:
   player: {fileID: 7302416160396845218}
   endUI: {fileID: 735284398}
   isFinish: 0
-  movement: {fileID: 7302416160396845217}
+  movement: {fileID: 7302416160396845221}
   accelMovement: {fileID: 0}
   timer: {fileID: 1483815743}
 --- !u!4 &127649214
@@ -8567,7 +8567,8 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Kayak
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2360939234179528256, guid: 9ca674853e00f3640b99059b28157574, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -8588,18 +8589,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 7302416160396845220}
   m_SourcePrefab: {fileID: 100100000, guid: 9ca674853e00f3640b99059b28157574, type: 3}
---- !u!114 &7302416160396845217 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2360939234179528256, guid: 9ca674853e00f3640b99059b28157574,
-    type: 3}
-  m_PrefabInstance: {fileID: 7302416160396845216}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7302416160396845218}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b1c57b24f3689264f85150a836939f63, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &7302416160396845218 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 790684154059356133, guid: 9ca674853e00f3640b99059b28157574,
@@ -8658,6 +8647,8 @@ MonoBehaviour:
   distanceText: {fileID: 783310802}
   paddleCountText: {fileID: 1668776721}
   scoreManager: {fileID: 127649213}
+  _distanceMeters: 0
+  _paddleCount: 0
 --- !u!114 &7302416160396845222
 MonoBehaviour:
   m_ObjectHideFlags: 0

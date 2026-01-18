@@ -31,8 +31,8 @@ public class PlayerBoatController : MonoBehaviour
     // --- 내부 상태 (원본과 동일) ---
     private float _propulsion;
     private (bool, bool) _gateLockTuple;
-    private int _distanceMeters;
-    private int _paddleCount;
+    public int _distanceMeters;
+    public int _paddleCount;
     private (int, int) _movementCountTuple;
     private (float, float) _angleSumAbsTuple;
 
