@@ -42,6 +42,7 @@ public class PlayerMovementController : MonoBehaviour {
     private (float, float) _phaseVelTuple;  // SmoothDamp (L, R)
     private static readonly int Blend = Animator.StringToHash("Blend");
     private static readonly int IsLeft = Animator.StringToHash("isLeft");
+    private static readonly int IsGameStart = Animator.StringToHash("isGameStart");
     
     // -- Physics -- //
     private Rigidbody _rigidbody;
@@ -172,9 +173,9 @@ public class PlayerMovementController : MonoBehaviour {
         // 추진량 계산
         CalculatePropulsion();
         
-        
         this.animator.SetBool(IsLeft, this._leftDominant);
         this.animator.SetFloat(Blend, this._propulsion);
+        this.animator.SetBool(IsGameStart, GameStarter.GameStarted);
     }
     
     private void JoyconGyroInput() {

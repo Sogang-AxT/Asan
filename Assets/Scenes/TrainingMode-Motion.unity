@@ -2124,6 +2124,11 @@ PrefabInstance:
       objectReference: {fileID: 1079016496}
     - target: {fileID: 2360939234179528256, guid: 9ca674853e00f3640b99059b28157574,
         type: 3}
+      propertyPath: propulsionGain
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 2360939234179528256, guid: 9ca674853e00f3640b99059b28157574,
+        type: 3}
       propertyPath: joyconCubeRight
       value: 
       objectReference: {fileID: 90621265}
@@ -2135,7 +2140,7 @@ PrefabInstance:
     - target: {fileID: 2360939234179528256, guid: 9ca674853e00f3640b99059b28157574,
         type: 3}
       propertyPath: yawTorqueFromDelta
-      value: 0.7
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2360939234179528256, guid: 9ca674853e00f3640b99059b28157574,
         type: 3}
@@ -2145,7 +2150,7 @@ PrefabInstance:
     - target: {fileID: 2360939234179528256, guid: 9ca674853e00f3640b99059b28157574,
         type: 3}
       propertyPath: strokePropulsionDecayTime
-      value: 2.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4040134786889608465, guid: 9ca674853e00f3640b99059b28157574,
         type: 3}
