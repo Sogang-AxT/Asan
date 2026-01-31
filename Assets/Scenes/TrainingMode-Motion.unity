@@ -2140,7 +2140,12 @@ PrefabInstance:
     - target: {fileID: 2360939234179528256, guid: 9ca674853e00f3640b99059b28157574,
         type: 3}
       propertyPath: lateralDampingMultiply
-      value: 1
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2360939234179528256, guid: 9ca674853e00f3640b99059b28157574,
+        type: 3}
+      propertyPath: strokePropulsionDecayTime
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 4040134786889608465, guid: 9ca674853e00f3640b99059b28157574,
         type: 3}
@@ -2217,8 +2222,7 @@ PrefabInstance:
       propertyPath: m_CollisionDetection
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 2360939234179528256, guid: 9ca674853e00f3640b99059b28157574, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -4118,7 +4122,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 340356398}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d7f890fdd5cbc6a43bc20bc0c905ad3d, type: 3}
   m_Name: 
@@ -4143,7 +4147,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 340356398}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e237f18e067073e47a6e88ea89e318f0, type: 3}
   m_Name: 
@@ -4166,7 +4170,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 340356398}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0a5ae8984f7d0c44fa3561a7a37c55a6, type: 3}
   m_Name: 
@@ -4190,6 +4194,18 @@ MonoBehaviour:
   centerOfMassOffset: {x: 0, y: -0.1, z: 0}
   propelTargetTransform: {fileID: 1306594035}
   useWorldSpaceForward: 0
+--- !u!114 &1306594048 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2360939234179528256, guid: 9ca674853e00f3640b99059b28157574,
+    type: 3}
+  m_PrefabInstance: {fileID: 813365934}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 340356398}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1c57b24f3689264f85150a836939f63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1331889285
 GameObject:
   m_ObjectHideFlags: 0
@@ -8594,7 +8610,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 953f846fbabb8f24ea5a8e6014c48292, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerMovementController: {fileID: 0}
+  playerMovementController: {fileID: 1306594048}
   thighL: {fileID: 6766536239299412655}
   thighR: {fileID: 6766536239396049946}
   maxRotationAngle: 30
