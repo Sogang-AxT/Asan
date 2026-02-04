@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TrainingMode-MotionLeg2.unity
     guid: c33b164160b635648a71f012127ab897
+  - enabled: 1
+    path: Assets/Scenes/TrainingMode-Motion_ArmRotation.unity
+    guid: d983dc9f9fdc90d4fa46f5bd08cf5a6e
   m_configObjects: {}
