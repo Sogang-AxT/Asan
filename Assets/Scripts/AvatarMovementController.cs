@@ -29,7 +29,7 @@ public class AvatarMovementController : MonoBehaviour {
         this._currentZR = this._initThighR;
     }
 
-    private void Awake() {
+    private void Start() {
         Init();
     }
     
