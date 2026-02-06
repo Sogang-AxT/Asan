@@ -37,7 +37,7 @@ public class AvatarMovementController : MonoBehaviour {
         if (!this.playerMovementController) {
             return;
         }
-
+        
         // 왼쪽 다리 아바타 애니메이션
         var targetZL = Mathf.Lerp(this._initThighL, this._initThighL - this.maxRotationAngle,
             this.playerMovementController.LeftPhase);

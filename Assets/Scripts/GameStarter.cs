@@ -23,8 +23,8 @@ public class GameStarter : MonoBehaviour
     public AudioSource sfxSource;              // 효과음 재생용 AudioSource
     public AudioClip startButtonSFX;
 
-    public JoyconInputReader player;
-    public JoyconAccelInputReader player2;
+    public PlayerMovementController player;
+    public PlayerAccelMovementController player2;
     void Start()
     {
         startButtonUI.SetActive(true);
@@ -78,7 +78,7 @@ public class GameStarter : MonoBehaviour
         GameStarted = true;
 
         if(player != null) player.JoyconCalibrator();
-        else if (player2 != null) player2.Calibrate();
+        else if (player2 != null) player2.JoyconCalibrator();
 
         // ▶ BGM 재생 시작 (페이드인)
         StartBackgroundMusic();

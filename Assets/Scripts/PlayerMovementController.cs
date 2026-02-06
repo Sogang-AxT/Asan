@@ -18,16 +18,13 @@ public class PlayerMovementController : MonoBehaviour {
     [Header("Counting / Thresholds")] 
     public float minCountAngle;         // 10f
     public float resetCountAngle;       // 5f
-    
     private bool _isAngleCalibrated;    // false
-    
     private (bool, bool) _gateLockTuple;        // gateL, gateR; gate -> 한 번만 카운트하도록 제한하는 스위치
     private (float, float) _localJoyconXTuple;  // 다리 로컬 기준 (좌, 우); _baseLX, _baseRX
     private (float, float) _worldJoyconXTuple;  // 다리 월드 기준 (좌, 우)
     private (float, float) _deltaAngleTuple;    // 다리 델타 각 (좌, 우); _lx, _rx
     private (float, float) _angleSumAbsTuple;   // 다리 각도 절대값 (좌, 우); _sumLeft/RightAngleAbs
     private (int, int) _movementCountTuple;     // 다리 움직임 카운팅 (좌, 우); _countLeft/Right
-    
     
     // 다리 움직임 피크 계산
     private sbyte _domTrend;            // +1 up, -1 down, 0 hold
@@ -36,15 +33,23 @@ public class PlayerMovementController : MonoBehaviour {
     private float _peakDomAngle;
     private float _phase, _phaseVel;
     private string _peakDomSide;        // "-"
-    public string PeakDomSide => _peakDomSide;
 
     // 아바타 애니메이션용
-    private (float, float) _phaseTuple;     // 위상 (L, R)
-    private (float, float) _phaseVelTuple;  // SmoothDamp (L, R)
+    [SerializeField] private Animator animator;
     public float LeftPhase => _phaseTuple.Item1;
     public float RightPhase => _phaseTuple.Item2;
+    private (float, float) _phaseTuple;     // 위상 (L, R)
+    private (float, float) _phaseVelTuple;  // SmoothDamp (L, R)
+    private static readonly int Blend = Animator.StringToHash("Blend");
+    private static readonly int IsLeft = Animator.StringToHash("isLeft");
+    private static readonly int IsGameStart = Animator.StringToHash("isGameStart");
     
     // -- Physics -- //
+    private Rigidbody _rigidbody;
+    private bool _leftDominant;
+    public bool LeftDominant => _leftDominant;
+    public float Propulsion => _propulsion;
+    
     [Header("Physics Assist")]
     public bool enablePhysicsAssist = true;
 
@@ -84,7 +89,6 @@ public class PlayerMovementController : MonoBehaviour {
     public bool scaleYawByPropulsion;           // Yaw 토크를 추진량에 비례시킬지;          // true
     public float fullAngleDeg;                  // 20f
     private float _propulsion;                  // 추친력
-    public float Propulsion => _propulsion;
 
     [Header("Smoothing")]
     public float phaseSmoothUp;             // 0.06f
@@ -93,20 +97,17 @@ public class PlayerMovementController : MonoBehaviour {
     public int distanceMeters;              // 0
     public int paddleCount;                 // 0
     
+    // 스트로크 기반 추진 임펄스
+    [Header("Stroke-based Propulsion (Fix holding input)")]
+    [SerializeField] private float strokePropulsionDecayTime; // 값이 작을수록 빨리 0으로 감쇠  // 2.5f
+    private float _lastStrokeTarget;   // 0..1
+    private float _lastStrokeTime;     // Time.time
+    
     // TODO: 제거
+    [SerializeField] private ScoreManager scoreManager;
     public TMP_Text distanceText;
     public TMP_Text paddleCountText;
-
-    [SerializeField] private ScoreManager scoreManager;
-
-    private Rigidbody _rigidbody;
-    private bool _leftDominant;
-    public bool LeftDominant => _leftDominant;
-
-        
-    private static readonly int Blend = Animator.StringToHash("Blend");
-    private static readonly int IsLeft = Animator.StringToHash("isLeft");
-    [SerializeField] private Animator animator;
+    //--
     
     
     private void Init() {
@@ -174,9 +175,9 @@ public class PlayerMovementController : MonoBehaviour {
         // 추진량 계산
         CalculatePropulsion();
         
-        
-        this.animator.SetBool(IsLeft, this.LeftDominant);
-        this.animator.SetFloat(Blend, this.Propulsion);
+        this.animator.SetBool(IsLeft, this._leftDominant);
+        this.animator.SetFloat(Blend, this._propulsion);
+        this.animator.SetBool(IsGameStart, GameStarter.GameStarted);
     }
     
     private void JoyconGyroInput() {
@@ -238,6 +239,14 @@ public class PlayerMovementController : MonoBehaviour {
             this._gateLockTuple.Item2 = true;
         }
 
+        // 스트로크가 발생한 순간에만 추진 목표를 저장
+        // minCountAngle~fullAngleDeg 범위를 0..1로 정규화해서 추진 강도로 사용
+        var target = Mathf.InverseLerp(Mathf.Max(0.01f, this.minCountAngle),
+                Mathf.Max(this.minCountAngle + 0.01f, this.fullAngleDeg), angleAbsDeg);
+
+        this._lastStrokeTarget = Mathf.Clamp01(target); // 스트로크 세기 (0 ~ 1)
+        this._lastStrokeTime = Time.time;               // 스트로크 발생 시간
+        
         ProcessStroke(leftSide, angleAbsDeg);
     }
     
@@ -251,12 +260,12 @@ public class PlayerMovementController : MonoBehaviour {
 
         this.distanceMeters += addDist;
         this.paddleCount += 1;
-        distanceText.text = distanceMeters + "m";
-        paddleCountText.text = "x " + paddleCount;
+        this.distanceText.text = this.distanceMeters + "m";
+        this.paddleCountText.text = "x " + this.paddleCount;
 
-        if (scoreManager != null)
+        if (this.scoreManager != null)
         {
-            scoreManager.RecordStroke(leftSide, angleAbsDeg);
+            this.scoreManager.RecordStroke(leftSide, angleAbsDeg);
         }
 
         if (leftSide) {
@@ -276,11 +285,11 @@ public class PlayerMovementController : MonoBehaviour {
             this._phaseTuple.Item1, targetL, ref this._phaseVelTuple.Item1, 
             Mathf.Max(1e-3f, this.phaseSmoothUp));
         
-        
         var targetR = Mathf.Clamp01(Mathf.Abs(this._deltaAngleTuple.Item2) / Mathf.Max(1f, this.fullAngleDeg));
         this._phaseTuple.Item2 = Mathf.SmoothDamp(
             this._phaseTuple.Item2, targetR, ref this._phaseVelTuple.Item2, 
             Mathf.Max(1e-3f, this.phaseSmoothUp));
+        
         
         // var target = Mathf.Clamp01(Mathf.Abs(this._domXPrev) / Mathf.Max(1f, this.fullAngleDeg));
         // var smoothTime = (this._domTrend == -1) ? this.phaseSmoothDown : this.phaseSmoothUp;
@@ -299,24 +308,22 @@ public class PlayerMovementController : MonoBehaviour {
         // var cosT  = Mathf.Cos(theta);
     }
 
-    // 추진량 계산
+    // 추진량 계산; 스트로크 발생 시, 저장한 lastStrokeTarget을 시간에 따라 감쇠
     private void CalculatePropulsion() {
-        var drive = 0f;
-        var absDom = 
-            Mathf.Abs(this._peakDomSide == "Left" ? this._deltaAngleTuple.Item1 : this._deltaAngleTuple.Item2);
+        // 마지막 스트로크 발생 후 경과 시간
+        var timeSinceStroke = (Time.time - this._lastStrokeTime);
+
+        // 0s -> 1, decayTime -> 0 (지수 감쇠)
+        var decayTime = Mathf.Max(0.01f, this.strokePropulsionDecayTime);   // 감쇠 시간
+        var envelope = Mathf.Exp(-timeSinceStroke / decayTime);       // 지수 감쇠; timeSinceStroke = 0 -> 1
+        var drive = (this._lastStrokeTarget * envelope);                    // (감쇠 적용) 목표 추진값
         
-        if (absDom > this.propulsionDeadBandDeg) {
-            drive = Mathf.InverseLerp(
-                this.propulsionDeadBandDeg, 
-                Mathf.Max(this.propulsionDeadBandDeg + 1f, this.fullAngleDeg), absDom);
-        }
-        
+        // 저역통과 필터; FPS가 달라도(60/120 등) 스무딩 체감을 비교적 일정하게 유지
         var dt = Mathf.Max(Time.deltaTime, 1e-4f);
-        var t = 1f - Mathf.Exp(-dt / Mathf.Max(1e-4f, this.propulsionSmoothing));
-        
+        var t = (1f - Mathf.Exp(-dt / Mathf.Max(1e-4f, this.propulsionSmoothing)));
         this._propulsion = Mathf.Lerp(this._propulsion, drive, t);
-        
-        // 피크 초기화
+
+        // 게이트 해제
         if (this._gateLockTuple.Item1 && Mathf.Abs(this._deltaAngleTuple.Item1) <= this.resetCountAngle) {
             this._gateLockTuple.Item1 = false;
         }
@@ -324,17 +331,31 @@ public class PlayerMovementController : MonoBehaviour {
         if (this._gateLockTuple.Item2 && Mathf.Abs(this._deltaAngleTuple.Item2) <= this.resetCountAngle) {
             this._gateLockTuple.Item2 = false;
         }
-    }
-    
-    private void StrokeProcessReset() {
-        this.distanceMeters = 0;
-        this.paddleCount = 0;
-        this._angleSumAbsTuple.Item1 = 0f;
-        this._angleSumAbsTuple.Item2 = 0f;
-        this._movementCountTuple.Item1 = 0;
-        this._movementCountTuple.Item2 = 0;
-        this._gateLockTuple.Item1 = false;
-        this._gateLockTuple.Item2 = false;
+        
+        
+        // var drive = 0f;
+        // var absDom = 
+        //     Mathf.Abs(this._peakDomSide == "Left" ? this._deltaAngleTuple.Item1 : this._deltaAngleTuple.Item2);
+        //
+        // if (absDom > this.propulsionDeadBandDeg) {
+        //     drive = Mathf.InverseLerp(
+        //         this.propulsionDeadBandDeg, 
+        //         Mathf.Max(this.propulsionDeadBandDeg + 1f, this.fullAngleDeg), absDom);
+        // }
+        //
+        // var dt = Mathf.Max(Time.deltaTime, 1e-4f);
+        // var t = 1f - Mathf.Exp(-dt / Mathf.Max(1e-4f, this.propulsionSmoothing));
+        //
+        // this._propulsion = Mathf.Lerp(this._propulsion, drive, t);
+        //
+        // // 피크 초기화
+        // if (this._gateLockTuple.Item1 && Mathf.Abs(this._deltaAngleTuple.Item1) <= this.resetCountAngle) {
+        //     this._gateLockTuple.Item1 = false;
+        // }
+        //
+        // if (this._gateLockTuple.Item2 && Mathf.Abs(this._deltaAngleTuple.Item2) <= this.resetCountAngle) {
+        //     this._gateLockTuple.Item2 = false;
+        // }
     }
     
     // Δ각 기반 연속 전진 & Yaw 살짝.. 
@@ -405,7 +426,7 @@ public class PlayerMovementController : MonoBehaviour {
     }
     
     // 부력 시뮬레이션
-    void ApplyBuoyancyAssist(Rigidbody rb) {
+    private void ApplyBuoyancyAssist(Rigidbody rb) {
         if (this.buoyancyPoints is { Length: > 0 }) {
             foreach (var point in this.buoyancyPoints) {
                 if (point) {
@@ -430,7 +451,7 @@ public class PlayerMovementController : MonoBehaviour {
     }
     
     // 물 위 미끄러짐 시뮬레이션
-    void ApplyWaterDragAssist(Rigidbody rb) {
+    private void ApplyWaterDragAssist(Rigidbody rb) {
         var speed = rb.velocity.magnitude;
         var angSpeed = rb.angularVelocity.magnitude;
         var localV = rb.transform.InverseTransformDirection(rb.velocity);
@@ -444,7 +465,7 @@ public class PlayerMovementController : MonoBehaviour {
     }
     
     // 속도 제한
-    void ClampVelocities(Rigidbody rb) {
+    private void ClampVelocities(Rigidbody rb) {
         if (rb.velocity.magnitude > this.maxVelocity) {
             rb.velocity = rb.velocity.normalized * this.maxVelocity;
         }
@@ -455,7 +476,7 @@ public class PlayerMovementController : MonoBehaviour {
     }
     
     // 카약 전복 방지
-    void UprightStabilization(Rigidbody rb) {
+    private void UprightStabilization(Rigidbody rb) {
         var worldForwardOnPlane = Vector3.ProjectOnPlane(Vector3.forward, Vector3.up);
         var localForwardOnPlane = Vector3.ProjectOnPlane(rb.transform.forward, Vector3.up);
         var desiredForwardOnPlane = this.useWorldSpaceForward ? worldForwardOnPlane : localForwardOnPlane;
