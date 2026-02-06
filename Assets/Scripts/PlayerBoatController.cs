@@ -15,7 +15,7 @@ public class PlayerBoatController : MonoBehaviour
     public float propulsionSmoothing = 0.15f;
     public float fullAngleDeg = 20f;
 
-    // Yaw Á¦¾î
+    // Yaw ì œì–´
     public float yawTorqueFromDelta = 0.25f;
     public bool scaleYawByPropulsion = true;
 
@@ -28,7 +28,7 @@ public class PlayerBoatController : MonoBehaviour
     public TMP_Text paddleCountText;
     [SerializeField] private ScoreManager scoreManager;
 
-    // --- ³»ºÎ »óÅÂ (¿øº»°ú µ¿ÀÏ) ---
+    // --- ë‚´ë¶€ ìƒíƒœ (ì›ë³¸ê³¼ ë™ì¼) ---
     private float _propulsion;
     private (bool, bool) _gateLockTuple;
     public int _distanceMeters;
@@ -36,10 +36,10 @@ public class PlayerBoatController : MonoBehaviour
     private (int, int) _movementCountTuple;
     private (float, float) _angleSumAbsTuple;
 
-    // --- ¿ÜºÎ °ø°³ ÇÁ·ÎÆÛÆ¼ (CharacterAnimationController ¿¬µ¿¿ë) ---
-    // ¾Ö´Ï¸ŞÀÌ¼ÇÀº ÀÌ °ªÀ» ÀĞ¾î°¡¸é µË´Ï´Ù.
+    // --- ì™¸ë¶€ ê³µê°œ í”„ë¡œí¼í‹° (CharacterAnimationController ì—°ë™ìš©) ---
+    // ì• ë‹ˆë©”ì´ì…˜ì€ ì´ ê°’ì„ ì½ì–´ê°€ë©´ ë©ë‹ˆë‹¤.
     public float Propulsion => _propulsion;
-    public bool LeftDominant => _input.IsLeftDominant; // ½Ç½Ã°£ ¹æÇâ
+    public bool LeftDominant => _input.IsLeftDominant; // ì‹¤ì‹œê°„ ë°©í–¥
     public int LegStrokeCountLeft => _movementCountTuple.Item1;
     public int LegStrokeCountRight => _movementCountTuple.Item2;
 
@@ -48,7 +48,7 @@ public class PlayerBoatController : MonoBehaviour
         _physics = GetComponent<BoatPhysics>();
         _input = GetComponent<JoyconInputReader>();
 
-        // ÃÊ±âÈ­
+        // ì´ˆê¸°í™”
         _gateLockTuple = (false, false);
     }
 
@@ -66,19 +66,19 @@ public class PlayerBoatController : MonoBehaviour
     {
         if (!GameStarter.GameStarted) return;
 
-        // 1. ÃßÁø·Â °è»ê (¿øº» ·ÎÁ÷: CalculatePropulsion)
+        // 1. ì¶”ì§„ë ¥ ê³„ì‚° (ì›ë³¸ ë¡œì§: CalculatePropulsion)
         CalculatePropulsionLogic();
 
-        // 2. °ÔÀÌÆ® ¸®¼Â (¿øº» ·ÎÁ÷: Update ¸¶Áö¸· ºÎºĞ)
+        // 2. ê²Œì´íŠ¸ ë¦¬ì…‹ (ì›ë³¸ ë¡œì§: Update ë§ˆì§€ë§‰ ë¶€ë¶„)
         CheckGateReset();
 
-        // 3. UI ¾÷µ¥ÀÌÆ®
+        // 3. UI ì—…ë°ì´íŠ¸
         UpdateUI();
     }
 
     private void FixedUpdate()
     {
-        // 4. ¹°¸® ¿£Áø¿¡ Èû Àü´Ş (¿øº» ·ÎÁ÷: ApplyPropulsionAndYaw)
+        // 4. ë¬¼ë¦¬ ì—”ì§„ì— í˜ ì „ë‹¬ (ì›ë³¸ ë¡œì§: ApplyPropulsionAndYaw)
         ApplyMovementToPhysics();
     }
 
@@ -86,8 +86,8 @@ public class PlayerBoatController : MonoBehaviour
     {
         float drive = 0f;
 
-        // [ÇÙ½É] ¿øº»Àº _peakDomSide(¸¶Áö¸· ÇÇÅ©)¸¦ ±âÁØÀ¸·Î °è»êÇÔ.
-        // µû¶ó¼­ _input.IsLastPeakLeft¸¦ »ç¿ëÇØ¾ß ¿øº»°ú ´À³¦ÀÌ µ¿ÀÏÇÔ.
+        // [í•µì‹¬] ì›ë³¸ì€ _peakDomSide(ë§ˆì§€ë§‰ í”¼í¬)ë¥¼ ê¸°ì¤€ìœ¼ë¡œ ê³„ì‚°í•¨.
+        // ë”°ë¼ì„œ _input.IsLastPeakLeftë¥¼ ì‚¬ìš©í•´ì•¼ ì›ë³¸ê³¼ ëŠë‚Œì´ ë™ì¼í•¨.
         float targetDelta = _input.IsLastPeakLeft ? _input.DeltaLeft : _input.DeltaRight;
         float absDom = Mathf.Abs(targetDelta);
 
@@ -117,17 +117,17 @@ public class PlayerBoatController : MonoBehaviour
     {
         if (_propulsion <= 1e-4f) return;
 
-        // Yaw ÅäÅ© °è»ê (¿øº» ·ÎÁ÷)
+        // Yaw í† í¬ ê³„ì‚° (ì›ë³¸ ë¡œì§)
         float deltaDiff = Mathf.Clamp(_input.DeltaRight - _input.DeltaLeft, -45f, 45f);
         float yaw = yawTorqueFromDelta * (deltaDiff / fullAngleDeg);
 
         if (scaleYawByPropulsion) yaw *= _propulsion;
 
-        // ¹°¸® ½ºÅ©¸³Æ®¿¡ ¸í·É ÇÏ´Ş
+        // ë¬¼ë¦¬ ìŠ¤í¬ë¦½íŠ¸ì— ëª…ë ¹ í•˜ë‹¬
         _physics.ApplyPhysicsForce(_propulsion, propulsionGain, yaw);
     }
 
-    // ½ºÆ®·ÎÅ© ÇÇÅ© ÀÌº¥Æ® ¼ö½Å
+    // ìŠ¤íŠ¸ë¡œí¬ í”¼í¬ ì´ë²¤íŠ¸ ìˆ˜ì‹ 
     private void HandleStrokePeak(bool isLeft, float angleAbs)
     {
         if (angleAbs < minCountAngle) return;
@@ -143,7 +143,7 @@ public class PlayerBoatController : MonoBehaviour
             _gateLockTuple.Item2 = true;
         }
 
-        // Åë°è ¹× Á¡¼ö Ã³¸®
+        // í†µê³„ ë° ì ìˆ˜ ì²˜ë¦¬
         int addDist = Mathf.RoundToInt(angleAbs / 10f);
         if (addDist < 1) addDist = 1;
 

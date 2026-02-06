@@ -4,7 +4,7 @@ using TMPro;
 
 public class GameStarter : MonoBehaviour
 {
-    public static bool GameStarted = false;
+    public static bool GameStarted;
 
     [Header("UI Elements")]
     public GameObject startButtonUI;
@@ -27,6 +27,7 @@ public class GameStarter : MonoBehaviour
     public PlayerAccelMovementController player2;
     void Start()
     {
+        GameStarted = false;
         startButtonUI.SetActive(true);
         countdownText.gameObject.SetActive(false);
 
@@ -42,7 +43,7 @@ public class GameStarter : MonoBehaviour
     }
 
     public void OnStartButtonPressed()
-    {
+    { 
         // 버튼 눌렀을 때 효과음 재생
         if (sfxSource && startButtonSFX)
             sfxSource.PlayOneShot(startButtonSFX);
@@ -52,6 +53,8 @@ public class GameStarter : MonoBehaviour
             guideObject.SetActive(false);
 
         StartCoroutine(CountdownCoroutine());
+        
+        GameStarted = true;
     }
 
     private IEnumerator CountdownCoroutine()
@@ -75,7 +78,6 @@ public class GameStarter : MonoBehaviour
 
         // ▶ 게임 시작!
         Time.timeScale = 1f;
-        GameStarted = true;
 
         if(player != null) player.JoyconCalibrator();
         else if (player2 != null) player2.JoyconCalibrator();
