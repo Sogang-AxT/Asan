@@ -8604,6 +8604,11 @@ PrefabInstance:
       objectReference: {fileID: 1696543534}
     - target: {fileID: 2360939234179528256, guid: 9ca674853e00f3640b99059b28157574,
         type: 3}
+      propertyPath: propulsionGain
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 2360939234179528256, guid: 9ca674853e00f3640b99059b28157574,
+        type: 3}
       propertyPath: joyconCubeRight
       value: 
       objectReference: {fileID: 302048490}
@@ -8612,6 +8617,21 @@ PrefabInstance:
       propertyPath: paddleCountText
       value: 
       objectReference: {fileID: 1668776721}
+    - target: {fileID: 2360939234179528256, guid: 9ca674853e00f3640b99059b28157574,
+        type: 3}
+      propertyPath: yawTorqueFromDelta
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2360939234179528256, guid: 9ca674853e00f3640b99059b28157574,
+        type: 3}
+      propertyPath: lateralDampingMultiply
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2360939234179528256, guid: 9ca674853e00f3640b99059b28157574,
+        type: 3}
+      propertyPath: strokePropulsionDecayTime
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4040134786889608465, guid: 9ca674853e00f3640b99059b28157574,
         type: 3}
       propertyPath: joyconInputReader
@@ -8838,7 +8858,6 @@ SceneRoots:
   - {fileID: 1740478165}
   - {fileID: 1379320763}
   - {fileID: 1259215506}
-  - {fileID: 7302416160396845216}
   - {fileID: 417464}
   - {fileID: 652557863}
   - {fileID: 8237608876732249863}
@@ -8848,3 +8867,4 @@ SceneRoots:
   - {fileID: 653780327}
   - {fileID: 690400673}
   - {fileID: 827441692}
+  - {fileID: 7302416160396845216}

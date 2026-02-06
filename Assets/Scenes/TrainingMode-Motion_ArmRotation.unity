@@ -2125,6 +2125,11 @@ PrefabInstance:
       objectReference: {fileID: 1079016496}
     - target: {fileID: 2360939234179528256, guid: 9ca674853e00f3640b99059b28157574,
         type: 3}
+      propertyPath: propulsionGain
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 2360939234179528256, guid: 9ca674853e00f3640b99059b28157574,
+        type: 3}
       propertyPath: joyconCubeRight
       value: 
       objectReference: {fileID: 90621265}
@@ -2141,7 +2146,12 @@ PrefabInstance:
     - target: {fileID: 2360939234179528256, guid: 9ca674853e00f3640b99059b28157574,
         type: 3}
       propertyPath: lateralDampingMultiply
-      value: 1
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2360939234179528256, guid: 9ca674853e00f3640b99059b28157574,
+        type: 3}
+      propertyPath: strokePropulsionDecayTime
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4040134786889608465, guid: 9ca674853e00f3640b99059b28157574,
         type: 3}
@@ -2152,7 +2162,7 @@ PrefabInstance:
         type: 3}
       propertyPath: playerBoatController
       value: 
-      objectReference: {fileID: 1306594036}
+      objectReference: {fileID: 0}
     - target: {fileID: 5482272626047143049, guid: 9ca674853e00f3640b99059b28157574,
         type: 3}
       propertyPath: m_Enabled
@@ -2218,15 +2228,10 @@ PrefabInstance:
       propertyPath: m_CollisionDetection
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 2360939234179528256, guid: 9ca674853e00f3640b99059b28157574, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 790684154059356133, guid: 9ca674853e00f3640b99059b28157574,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1306594036}
     - targetCorrespondingSourceObject: {fileID: 7997703167566775034, guid: 9ca674853e00f3640b99059b28157574,
         type: 3}
       insertIndex: -1
@@ -4104,64 +4109,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 813365934}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1306594036
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 340356398}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b1c57b24f3689264f85150a836939f63, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  joyconCubeLeft: {fileID: 1079016496}
-  joyconCubeRight: {fileID: 90621265}
-  isInvertedLeft: 0
-  isInvertedRight: 0
-  useAngleAutoCalibrator: 1
-  manualCalibrateKeyCode: 99
-  deadZoneDegree: 5
-  minCountAngle: 10
-  resetCountAngle: 5
-  enablePhysicsAssist: 1
-  constantWaterLevel: 0
-  buoyancyPoints:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  buoyancyStrength: 9.81
-  buoyancyScale: 1
-  baseDrag: 1.5
-  dragSpeedFactor: 0.05
-  baseAngularDrag: 3
-  angularDragFactor: 0.025
-  lateralDampingMultiply: 0.8
-  maxVelocity: 6
-  maxAngularVelocity: 5
-  uprightStartAngleDeg: 5
-  uprightStability: 12
-  uprightAngularDamping: 0.1
-  applyCenterOfMass: 1
-  propelTargetTransform: {fileID: 1306594035}
-  useWorldSpaceForward: 0
-  propulsionDeadBandDeg: 3
-  propulsionGain: 10
-  propulsionSmoothing: 0.15
-  yawTorqueFromDelta: 0.25
-  scaleYawByPropulsion: 1
-  fullAngleDeg: 20
-  phaseSmoothUp: 0.06
-  phaseSmoothDown: 0.18
-  deadzone: 0.02
-  distanceMeters: 0
-  paddleCount: 0
-  distanceText: {fileID: 285386574}
-  paddleCountText: {fileID: 2017360340}
-  scoreManager: {fileID: 497207437}
-  animator: {fileID: 813365935}
 --- !u!1 &1331889285
 GameObject:
   m_ObjectHideFlags: 0
@@ -4518,7 +4465,7 @@ MonoBehaviour:
   fadeInSeconds: 1.5
   sfxSource: {fileID: 1925329976}
   startButtonSFX: {fileID: 8300000, guid: fdf6093311cc4874f9879e15bc10004a, type: 3}
-  player: {fileID: 1306594036}
+  player: {fileID: 0}
   player2: {fileID: 0}
 --- !u!4 &1381819784
 Transform:
