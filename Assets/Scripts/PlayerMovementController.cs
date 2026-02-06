@@ -47,6 +47,8 @@ public class PlayerMovementController : MonoBehaviour {
     // -- Physics -- //
     private Rigidbody _rigidbody;
     private bool _leftDominant;
+    public bool LeftDominant => _leftDominant;
+    public float Propulsion => _propulsion;
     
     [Header("Physics Assist")]
     public bool enablePhysicsAssist = true;
@@ -403,7 +405,7 @@ public class PlayerMovementController : MonoBehaviour {
     }
     
     // 조이콘 입력 보정자
-    private void JoyconCalibrator() {
+    public void JoyconCalibrator() {
         // Joycon 로컬 X 값
         this._localJoyconXTuple.Item1 = ReadLocalX(this.joyconCubeLeft, this.isInvertedLeft);
         this._localJoyconXTuple.Item2 = ReadLocalX(this.joyconCubeRight, this.isInvertedRight);

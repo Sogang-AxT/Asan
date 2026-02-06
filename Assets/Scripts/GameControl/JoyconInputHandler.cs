@@ -35,9 +35,19 @@ public class JoyconInputHandler : MonoBehaviour {
 
     private void Update() {
         if (this.joyconsTuple.Item1 == null || this.joyconsTuple.Item2 == null) {
+            this.joyconManager = JoyconManager.Instance;
             return;
         }
-        
+
+        if (this.joyconsTuple.Item1 == null)
+        {
+            this.joyconsTuple.Item1 = this.joyconManager.leftJoycon;
+        }
+        if (this.joyconsTuple.Item2 == null)
+        {
+            this.joyconsTuple.Item2 = this.joyconManager.rightJoycon;
+        }
+
         if (!this.isJoyconBindingChecked) {
             BindingCheck();
         }
