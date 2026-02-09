@@ -2120,6 +2120,11 @@ PrefabInstance:
       objectReference: {fileID: 497207437}
     - target: {fileID: 2360939234179528256, guid: 9ca674853e00f3640b99059b28157574,
         type: 3}
+      propertyPath: minCountAngle
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 2360939234179528256, guid: 9ca674853e00f3640b99059b28157574,
+        type: 3}
       propertyPath: joyconCubeLeft
       value: 
       objectReference: {fileID: 1079016496}
@@ -2140,8 +2145,18 @@ PrefabInstance:
       objectReference: {fileID: 2017360340}
     - target: {fileID: 2360939234179528256, guid: 9ca674853e00f3640b99059b28157574,
         type: 3}
+      propertyPath: resetCountAngle
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 2360939234179528256, guid: 9ca674853e00f3640b99059b28157574,
+        type: 3}
       propertyPath: yawTorqueFromDelta
       value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2360939234179528256, guid: 9ca674853e00f3640b99059b28157574,
+        type: 3}
+      propertyPath: propulsionDeadBandDeg
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 2360939234179528256, guid: 9ca674853e00f3640b99059b28157574,
         type: 3}
