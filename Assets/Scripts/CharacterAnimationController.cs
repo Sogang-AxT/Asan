@@ -5,7 +5,7 @@ public class CharacterAnimationController : MonoBehaviour {
     private static readonly int IsLeft = Animator.StringToHash("isLeft");
 
     [SerializeField] private PlayerMovementController playerBoatController;
-    [SerializeField] private PlayerAccelMovementController playerAccelBoatController;
+    [SerializeField] private PlayerAccelBoatController playerAccelBoatController;
 
     [SerializeField] private Animator animator;
 
