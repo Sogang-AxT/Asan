@@ -10,10 +10,9 @@ public class EndTrainingUI : MonoBehaviour
     [Header("Texts")]
     public TextMeshProUGUI timeText;     // "훈련 시간"
     public TextMeshProUGUI distanceText; // "이동 거리"
-    //public TextMeshProUGUI countText;    // "운동 횟수"
-    public TextMeshProUGUI CountText; // "운동 횟수"
-    public TextMeshProUGUI AngleText;    // "운동 각도"
-    public TextMeshProUGUI ScoreText;    // "총 점수"
+    public TextMeshProUGUI countText; // "운동 횟수"
+    public TextMeshProUGUI angleText;    // "운동 각도"
+    public TextMeshProUGUI scoreText;    // "총 점수"
 
     [Header("Score Settings")]
     private float baseTimeSec = 60f; 
@@ -33,14 +32,14 @@ public class EndTrainingUI : MonoBehaviour
         timeText.text     = FormatTime(timeSec);
         distanceText.text = $"{distanceM:0} m";
         //ountText.text    = $"{paddleCount} 개";
-        if (CountText) CountText.text = $"좌-{leftCnt}회 / 우-{rightCnt}회";
-        if (AngleText)  AngleText.text  = $"좌-{avgLeftDeg:0.#}° / 우-{avgRightDeg:0.#}°";
+        if (countText) countText.text = $"좌-{leftCnt}회 / 우-{rightCnt}회";
+        if (angleText)  angleText.text  = $"좌-{avgLeftDeg:0.#}° / 우-{avgRightDeg:0.#}°";
         // 점수 계산 (최종 목표값)
         float score = CalculateScore(avgLeftDeg, avgRightDeg, timeSec);
         int targetScore = Mathf.RoundToInt(score);
 
         // 즉시 텍스트를 넣는 대신, 애니메이션으로 올리기
-        if (ScoreText)
+        if (scoreText)
         {
             // 기존 코루틴 정리
             if (_scoreAnimCo != null) StopCoroutine(_scoreAnimCo);
@@ -85,13 +84,13 @@ public class EndTrainingUI : MonoBehaviour
     {
         if (duration <= 0f)
         {
-            ScoreText.text = $"{to}점";
+            scoreText.text = $"{to}점";
             yield break;
         }
 
         float t = 0f;
         int lastShown = from;
-        ScoreText.text = $"{from}점";
+        scoreText.text = $"{from}점";
 
         while (t < duration)
         {
@@ -105,12 +104,12 @@ public class EndTrainingUI : MonoBehaviour
             if (val != lastShown)
             {
                 lastShown = val;
-                ScoreText.text = $"{val}점";
+                scoreText.text = $"{val}점";
             }
             yield return null;
         }
 
-        ScoreText.text = $"{to}점";
+        scoreText.text = $"{to}점";
         _scoreAnimCo = null;
     }
 }
