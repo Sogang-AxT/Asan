@@ -53,8 +53,6 @@ public class GameStarter : MonoBehaviour
             guideObject.SetActive(false);
 
         StartCoroutine(CountdownCoroutine());
-        
-        GameStarted = true;
     }
 
     private IEnumerator CountdownCoroutine()
@@ -78,12 +76,13 @@ public class GameStarter : MonoBehaviour
 
         // ▶ 게임 시작!
         Time.timeScale = 1f;
-
+        
         if(player != null) player.JoyconCalibrator();
         else if (player2 != null) player2.JoyconCalibrator();
 
         // ▶ BGM 재생 시작 (페이드인)
         StartBackgroundMusic();
+        GameStarted = true;
     }
 
     private void StartBackgroundMusic()

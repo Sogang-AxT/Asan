@@ -17,9 +17,8 @@ public class ScoreManager : MonoBehaviour
     public EndTrainingUI endUI;
     public bool isFinish = false;
     private bool isEnd = false;
+    private PlayerMovementController movementController;
 
-    public PlayerBoatController movement;
-    public PlayerAccelBoatController accelMovement;
 
     [SerializeField] private PlayTimer timer;
 
@@ -27,8 +26,7 @@ public class ScoreManager : MonoBehaviour
     {
         if (player != null)
         {
-            movement = player.GetComponent<PlayerBoatController>();
-            accelMovement = player.GetComponent<PlayerAccelBoatController>();
+            movementController = player.GetComponent<PlayerMovementController>();
         }
     }
 
@@ -44,17 +42,19 @@ public class ScoreManager : MonoBehaviour
     {
         if(isFinish == true && isEnd ==false)
         {
-            float distanceM = 0f;
+            // float distanceM = 0f;
+            //
+            // if (accelMovement != null && accelMovement.enabled)
+            // {
+            //     distanceM = accelMovement._distanceMeters;
+            // }
+            // // ìš°ì„ ìˆœìœ„ 2: ê¸°ì¡´ ë¬´ë¸Œë¨¼íŠ¸ ì»¨íŠ¸ë¡¤ëŸ¬ê°€ ì¼œì ¸ ìžˆëŠ”ê°€?
+            // else if (movement != null && movement.enabled)
+            // {
+            //     distanceM = movement._distanceMeters;
+            // }
 
-            if (accelMovement != null && accelMovement.enabled)
-            {
-                distanceM = accelMovement._distanceMeters;
-            }
-            // ¿ì¼±¼øÀ§ 2: ±âÁ¸ ¹«ºê¸ÕÆ® ÄÁÆ®·Ñ·¯°¡ ÄÑÁ® ÀÖ´Â°¡?
-            else if (movement != null && movement.enabled)
-            {
-                distanceM = movement._distanceMeters;
-            }
+            distance = movementController.distanceMeters;
             isEnd = true;
             int leftCnt = _leftValues.Count;
             int rightCnt = _rightValues.Count;
@@ -62,11 +62,11 @@ public class ScoreManager : MonoBehaviour
             float avgL = (leftCnt > 0) ? _leftValues.Average() : 0f;
             float avgR = (rightCnt > 0) ? _rightValues.Average() : 0f;
 
-            Debug.Log($"[Result] Dist: {distanceM}m, AvgL: {avgL:F1}, AvgR: {avgR:F1}");
+            // Debug.Log($"[Result] Dist: {distanceM}m, AvgL: {avgL:F1}, AvgR: {avgR:F1}");
 
             if (endUI != null)
             {
-                endUI.Show(timer.ElapsedTime, distanceM, avgL, avgR, leftCnt, rightCnt);
+                endUI.Show(timer.ElapsedTime, distance, avgL, avgR, leftCnt, rightCnt);
             }
 
             isEnd = true;
